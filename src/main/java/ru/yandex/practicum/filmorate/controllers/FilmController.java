@@ -20,14 +20,8 @@ public class FilmController {
 
     FilmValidator filmValidator;
 
-//    public FilmController() {
-//        this.filmValidator = new FilmValidator();
-//
-//    }
-
     @GetMapping
     public Collection<Film> findAll() {
-        log.info("findAll films");
         return films.values();
     }
 
