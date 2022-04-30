@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -20,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FilmControllerTest {
     @Autowired
     FilmController filmController;
+    @Autowired
+    FilmStorage filmStorage;
     @Autowired
     private MockMvc mockMvc;
 
@@ -53,7 +56,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.post("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"PT2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -63,7 +66,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.post("/films")
                         .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"PT2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -73,7 +76,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.post("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some long descriptionfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"PT2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -83,7 +86,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.post("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"P-T2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -93,7 +96,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.post("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"ZERO\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -116,7 +119,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.put("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"PT2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -126,7 +129,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.put("/films")
                         .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"PT2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -136,7 +139,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.put("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some long descriptionfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"PT2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -146,7 +149,7 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.put("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"P-T2H\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -156,12 +159,12 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.put("/films")
                         .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"ZERO\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
     @AfterEach
     void delete() {
-        filmController.getFilms().clear();
+        filmStorage.deleteAll();
     }
 }

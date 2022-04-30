@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -18,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
     @Autowired
     UserController userController;
+    @Autowired
+    UserStorage userStorage;
     @Autowired
     private MockMvc mockMvc;
 
@@ -51,7 +54,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.put("/users")
                         .content("{\"id\":1,\"email\":\"\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -61,7 +64,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.put("/users")
                         .content("{\"id\":1,\"email\":\"gggg\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -84,7 +87,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.put("/users")
                         .content("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"2023-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -107,7 +110,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/users")
                         .content("{\"id\":1,\"email\":\"\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -117,7 +120,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/users")
                         .content("{\"id\":1,\"email\":\"gggg\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
@@ -140,14 +143,15 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/users")
                         .content("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"2023-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
         ;
     }
 
 
 
+
     @AfterEach
     void delete() {
-        userController.getUsers().clear();
+        userStorage.deleteAll();
     }
 }
