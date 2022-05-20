@@ -32,6 +32,5 @@ public class FilmService {
         Comparator<Film> comparator = (c1, c2) -> c2.getLikes().size() - c1.getLikes().size();
         films.sort(comparator);
         return films.subList(0, count);
-
     }
 }
