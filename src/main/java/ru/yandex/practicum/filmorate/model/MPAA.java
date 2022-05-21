@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-public enum Rating {
+public enum MPAA {
     G,
     PG,
     PG13,

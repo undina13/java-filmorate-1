@@ -6,6 +6,6 @@ import lombok.Data;
 public class Friends {
     int user1_id;
     int user2_id;
-    Friendship friendship;
+   boolean friendship;
 
 }
