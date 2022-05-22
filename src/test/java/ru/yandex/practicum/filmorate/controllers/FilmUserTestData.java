@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.Duration;
@@ -8,28 +9,28 @@ import java.time.LocalDate;
 
 public class FilmUserTestData {
 
-    public static Film film1 = new Film(1, "New film", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+    public static Film film1 = new Film(1, "New film", "Some description", LocalDate.of(2020, 10, 13 ), Duration
+            .ofMinutes(120), MPAA.G);
     public static Film film2 = new Film(2, "New film2", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film3 = new Film(3, "New film3", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film4 = new Film(4, "New film4", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film5 = new Film(5, "New film5", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film6 = new Film(6, "New film6", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film7 = new Film(7, "New film7", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film8 = new Film(8, "New film8", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film9 = new Film(9, "New film9", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film10 = new Film(10, "New film10", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
     public static Film film11 = new Film(11, "New film11", "Some description", LocalDate.of(2020, 10, 13), Duration
-            .ofMinutes(120));
+            .ofMinutes(120), MPAA.G);
 
 
     public static User user1 = new User(1, "dfg@mail.ru", "login", "name", LocalDate.of(1980, 5, 13));
