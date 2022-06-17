@@ -13,9 +13,9 @@ import java.time.chrono.ChronoLocalDate;
 @UtilityClass
 public class FilmValidator {
 
-//  public void validate(Film film) {
-//       if (new Date(1895, 12, 28).after(film.getReleaseDate())) {
-//            throw new ValidationException("Дата релиза фильма раньше 28.12.1895");
-//        }
-//   }
+  public void validate(Film film) {
+        if(LocalDate.of(1895, 12,28).isAfter(film.getReleaseDate())){
+            throw new ValidationException("Дата релиза фильма раньше 28.12.1895");
+        }
+    }
 }

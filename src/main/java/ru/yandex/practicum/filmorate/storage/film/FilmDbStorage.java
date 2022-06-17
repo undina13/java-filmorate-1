@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
-
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +37,7 @@ public class FilmDbStorage implements FilmStorage {
             PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"film_id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            stmt.setDate(3, film.getReleaseDate());
+            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
             stmt.setInt(5, film.getMpa().getId());
             return stmt;
@@ -62,7 +62,7 @@ public class FilmDbStorage implements FilmStorage {
         int test = jdbcTemplate.update(sqlQuery
                 , film.getName()
                 , film.getDescription()
-                , film.getReleaseDate()
+                , Date.valueOf(film.getReleaseDate())
                 , film.getDuration()
                 , film.getMpa().getId()
                 , film.getId());
@@ -97,7 +97,7 @@ public class FilmDbStorage implements FilmStorage {
                                 rs.getInt("film_id"),
                                 rs.getString("name"),
                                 rs.getString("description"),
-                                rs.getDate("release_Date"),
+                                rs.getDate("release_Date").toLocalDate(),
                                 rs.getInt("duration"),
                                 new MPAA(rs.getInt("mpaa_id"),
                                         rs.getString(8))
@@ -117,7 +117,7 @@ public class FilmDbStorage implements FilmStorage {
                     filmRows.getInt("film_id"),
                     filmRows.getString("name"),
                     filmRows.getString("description"),
-                    filmRows.getDate("release_Date"),
+                    filmRows.getDate("release_Date").toLocalDate(),
                     filmRows.getInt("duration"),
                     new MPAA(filmRows.getInt("mpaa_id"),
                             filmRows.getString(8))
@@ -163,7 +163,7 @@ public class FilmDbStorage implements FilmStorage {
                 rs.getInt("film_id"),
                 rs.getString("name"),
                 rs.getString("description"),
-                rs.getDate("release_Date"),
+                rs.getDate("release_Date").toLocalDate(),
                 rs.getInt("duration"),
                 new MPAA(rs.getInt("mpaa_id"),
                         rs.getString(8)));

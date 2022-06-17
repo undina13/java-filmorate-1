@@ -21,7 +21,7 @@ public class Film {
    @Size(max = 200)
    private  String description;
 
-   private Date releaseDate;
+   private LocalDate releaseDate;
 
    private Integer duration;
 
@@ -33,7 +33,7 @@ public class Film {
 
 
 
-   public Film(int id, String name, String description, Date releaseDate, Integer duration, MPAA mpa) {
+   public Film(int id, String name, String description, LocalDate releaseDate, Integer duration, MPAA mpa) {
       this.id = id;
       this.name = name;
       this.description = description;

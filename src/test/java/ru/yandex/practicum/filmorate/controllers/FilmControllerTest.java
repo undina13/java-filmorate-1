@@ -36,7 +36,7 @@ class FilmControllerTest {
 
     @Test
     void findAll() throws Exception {
-    //    filmController.put(FilmUserTestData.film1);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/films"))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -59,15 +59,15 @@ class FilmControllerTest {
         filmStorage.deleteFilm(4);
     }
 
-//    @Test
-//    void createBadData() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/films")
-//                        .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isInternalServerError())
-//        ;
-//    }
+    @Test
+    void createBadData() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/films")
+                        .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+        ;
+    }
 
     @Test
     void createEmptyName() throws Exception {
@@ -90,7 +90,6 @@ class FilmControllerTest {
     }
 
 
-
     @Test
     void putAllOk() throws Exception {
         mockMvc.perform(
@@ -103,16 +102,16 @@ class FilmControllerTest {
                 .andExpect(content()
                         .json("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":120,\"likes\":[3],\"genres\":[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":{\"id\":1,\"name\":\"G\"}}"));
     }
-//
-//    @Test
-//    void putBadData() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.put("/films")
-//                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isInternalServerError())
-//        ;
-//    }
+
+    @Test
+    void putBadData() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/films")
+                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+        ;
+    }
 
     @Test
     void putEmptyName() throws Exception {
@@ -134,9 +133,4 @@ class FilmControllerTest {
         ;
     }
 
-
-    @AfterEach
-    void delete() {
-        filmStorage.deleteAll();
-    }
 }

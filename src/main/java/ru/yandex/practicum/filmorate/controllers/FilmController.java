@@ -49,20 +49,16 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-  //   filmValidator.validate(film);
-//        if (!new Date(1895, 12, 28).before(film.getReleaseDate())) {
-//            throw new ValidationException("Дата релиза фильма раньше 28.12.1895");
-//        }
+     filmValidator.validate(film);
+
         log.info("Добавляемый film: {}", film);
         return filmDbService.create(film);
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-     // filmValidator.validate(film);
-//        if (!new Date(1895, 12, 28).before(film.getReleaseDate())) {
-//            throw new ValidationException("Дата релиза фильма раньше 28.12.1895");
-//        }
+     filmValidator.validate(film);
+
         log.info("Изменяемый film: {}", film);
         return filmDbService.put(film);
     }
