@@ -12,9 +12,9 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,7 +29,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-
         String sqlQuery = "insert into users (email, login, name, birthday) values(?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -42,7 +41,6 @@ public class UserDbStorage implements UserStorage {
         }, keyHolder);
         user.setId(keyHolder.getKey().intValue());
         return user;
-
     }
 
     @Override
@@ -71,18 +69,13 @@ public class UserDbStorage implements UserStorage {
                                 rs.getDate("birthday")
                         )
         )
+                .map(this::setFriends)
                 .collect(Collectors.toList());
-    }
-
-    public Collection<User> getFriend(int id) {
-
-        return null;
     }
 
     @Override
     public Optional<User> get(int id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where USER_ID = ?", id);
-
         if (userRows.next()) {
             User user = new User(
                     userRows.getInt("user_id"),
@@ -91,10 +84,8 @@ public class UserDbStorage implements UserStorage {
                     userRows.getString("name"),
                     userRows.getDate("birthday")
             );
-
-
             log.info("Найден пользователь: {} {}", user.getId(), user.getName());
-
+            setFriends(user);
             return Optional.of(user);
         } else {
             log.info("Пользователь с идентификатором {} не найден.", id);
@@ -109,8 +100,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int id) {
-
-        String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = "  + id + ");";
+        String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + id + ");";
         List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
         return users;
     }
@@ -127,7 +117,6 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void deleteFriends(int id, int friendId) {
         String sql1Query = "delete from FRIENDS where USER_ID = ? AND FRIEND_ID = ?";
-
         jdbcTemplate.update(sql1Query,
                 id,
                 friendId);
@@ -135,7 +124,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
-        String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = "  + id + ") AND USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = "  + otherId + ")";
+        String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + id + ") AND USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + otherId + ")";
         List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
         return users;
     }
@@ -148,7 +137,19 @@ public class UserDbStorage implements UserStorage {
                 rs.getString("name"),
                 rs.getDate("birthday")
         );
+        setFriends(user);
+        return user;
+    }
 
+    private User setFriends(User user) {
+        Set<Integer> setOfFriends = getFriends(user.getId())
+                .stream()
+                .map(user1 -> user1.getId())
+                .collect(Collectors.toSet());
+        if (setOfFriends.isEmpty()) {
+            return user;
+        }
+        user.setFriends(setOfFriends);
         return user;
     }
 }

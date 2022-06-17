@@ -30,7 +30,6 @@ public class User {
     @Past
     private Date birthday;
 
-
   private Set<Integer> friends;
 
 
@@ -41,6 +40,6 @@ public class User {
         this.login = login;
         this.name = name;
         this.birthday = birthday;
-        this.friends = new HashSet<>();
+   //     this.friends = new HashSet<>();
     }
 }

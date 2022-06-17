@@ -31,7 +31,6 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-
         String sqlQuery = "insert into FILM (NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPAA_ID) values(?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -54,7 +53,6 @@ public class FilmDbStorage implements FilmStorage {
                        filmId);
            }
        }
-
         return film;
     }
 
@@ -68,17 +66,14 @@ public class FilmDbStorage implements FilmStorage {
                 , film.getDuration()
                 , film.getMpa().getId()
                 , film.getId());
-
         if (film.getGenres()!= null){
             String sql2Query = "delete from GENRE_FILM where  FILM_ID = ?";
-
             jdbcTemplate.update(sql2Query,
                     film.getId());
             TreeSet<Genre> genresSet =  new TreeSet<>(Comparator.comparing(Genre::getId));
                genresSet.addAll(film.getGenres());
                film.setGenres(genresSet);
             for( Genre genre :genresSet){
-
                 String sql1Query = "insert into GENRE_FILM(GENRE_ID, FILM_ID)   " +
                         "values  (?, ?) ";
               jdbcTemplate.update(sql1Query,
@@ -89,7 +84,6 @@ public class FilmDbStorage implements FilmStorage {
         if (test != 1) {
             throw new FilmNotFoundException("film not found");
         }
-
         return film;
     }
 
@@ -118,9 +112,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film get(int id) {
         SqlRowSet filmRows = jdbcTemplate
                 .queryForRowSet("select * from film join mpaa on FILM.MPAA_id = mpaa.mpaa_id where FILM_ID = ?", id);
-
         if (filmRows.next()) {
-
             Film film = new Film(
                     filmRows.getInt("film_id"),
                     filmRows.getString("name"),
@@ -201,8 +193,6 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-
-
     private Genre makeGenre(ResultSet gs) throws SQLException {
         return new Genre(
                 gs.getInt("genre_id"),
@@ -214,6 +204,5 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteAll() {
 
     }
-
 
 }
