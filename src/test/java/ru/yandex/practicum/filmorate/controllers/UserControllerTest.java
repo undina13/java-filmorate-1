@@ -1,14 +1,18 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -17,44 +21,47 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+
 public class UserControllerTest {
     @Autowired
     UserController userController;
+
     @Autowired
-    @Qualifier("userDbStorage")
-    UserStorage userStorage;
+      UserDbStorage userStorage;
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     void findAll() throws Exception {
-        userController.put(FilmUserTestData.user1);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("[{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}]"));
+                        .json("[{\"id\":1,\"email\":\"user1@mail.ru\",\"login\":\"user1\",\"name\":\"user1name\",\"birthday\":\"2000-10-10\",\"friends\":[2,3]},{\"id\":2,\"email\":\"user2@mail.ru\",\"login\":\"user2\",\"name\":\"user2name\",\"birthday\":\"1985-05-10\",\"friends\":[1,3]},{\"id\":3,\"email\":\"user3@mail.ru\",\"login\":\"user3\",\"name\":\"user3name\",\"birthday\":\"1990-12-31\",\"friends\":null}]"));
     }
 
     @Test
     void putAllOk() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/users")
-                        .content("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
+                        .content("{\"id\":1,\"email\":\"user1@mail.ru\",\"login\":\"user1new\",\"name\":\"user1namenew\",\"birthday\":\"2000-10-10\",\"friends\":[2,3]}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}"));
+                        .json("{\"id\":1,\"email\":\"user1@mail.ru\",\"login\":\"user1new\",\"name\":\"user1namenew\",\"birthday\":\"2000-10-10\",\"friends\":[2,3]}"));
     }
 
     @Test
     void putEmptyEmail() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/users")
-                        .content("{\"id\":1,\"email\":\"\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
+                        .content("{\"id\":4,\"email\":\"\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
@@ -94,23 +101,24 @@ public class UserControllerTest {
     }
 
     @Test
-    void createAllOk() throws Exception {
+    @DirtiesContext
+        void createAllOk() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
-                        .content("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
+                        .content("{\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}"));
+                        .json("{\"id\":4,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}"));
     }
 
     @Test
     void createEmptyEmail() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
-                        .content("{\"id\":1,\"email\":\"\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
+                        .content("{\"email\":\"\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
@@ -120,30 +128,31 @@ public class UserControllerTest {
     void createBadEmail() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
-                        .content("{\"id\":1,\"email\":\"gggg\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
+                        .content("{\"email\":\"gggg\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
 
     @Test
+    @DirtiesContext
     void createEmptyName() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
-                        .content("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"\",\"birthday\":\"1980-05-13\"}")
+                        .content("{\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"\",\"birthday\":\"1980-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"login\",\"birthday\":\"1980-05-13\"}"));
+                        .json("{\"id\":4,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"login\",\"birthday\":\"1980-05-13\"}"));
     }
 
     @Test
     void createBirthdayFuture() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/users")
-                        .content("{\"id\":1,\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"2023-05-13\"}")
+                        .content("{\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"2023-05-13\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;

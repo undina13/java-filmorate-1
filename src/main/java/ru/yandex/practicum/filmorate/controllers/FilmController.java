@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
@@ -13,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import javax.validation.Valid;
+import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,14 +49,20 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-    // filmValidator.validate(film);
+  //   filmValidator.validate(film);
+//        if (!new Date(1895, 12, 28).before(film.getReleaseDate())) {
+//            throw new ValidationException("Дата релиза фильма раньше 28.12.1895");
+//        }
         log.info("Добавляемый film: {}", film);
         return filmDbService.create(film);
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-   //   filmValidator.validate(film);
+     // filmValidator.validate(film);
+//        if (!new Date(1895, 12, 28).before(film.getReleaseDate())) {
+//            throw new ValidationException("Дата релиза фильма раньше 28.12.1895");
+//        }
         log.info("Изменяемый film: {}", film);
         return filmDbService.put(film);
     }

@@ -20,7 +20,9 @@ public class UserDBService {
     public UserDBService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-
+public Collection<User> getAll(){
+        return userStorage.getAll();
+}
    public Optional<User> get(int id){
         if(id <= 0 ){
             throw new UserNotFoundException("Неверный айди юзера");
@@ -53,5 +55,9 @@ public class UserDBService {
             throw  new UserNotFoundException("user not found");
         }
        return userStorage.getCommonFriends(id, otherId);
+    }
+
+    public User put(User user) {
+        return userStorage.put(user);
     }
 }

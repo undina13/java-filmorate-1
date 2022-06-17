@@ -130,7 +130,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public List<Film> getBestFilms(int count) {
-        String sql = "select * from film JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID  GROUP BY LIKES.FILM_ID ORDER BY COUNT(LIKES.USER_ID) DESC" ;
+        String sql = "select * from film JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID  GROUP BY LIKES.FILM_ID, PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC" ;
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
         if (films.isEmpty()) {
             films = new ArrayList<>(getAll());
@@ -203,6 +203,12 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteAll() {
 
+    }
+
+    public void deleteFilm(int id){
+        String sql1Query = "delete from FILM where FILM_ID = ? " ;
+        jdbcTemplate.update(sql1Query,
+                id);
     }
 
 }

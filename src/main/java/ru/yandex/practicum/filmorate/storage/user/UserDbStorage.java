@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -52,25 +53,29 @@ public class UserDbStorage implements UserStorage {
                 , user.getName()
                 , user.getBirthday()
                 , user.getId());
+
         return user;
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.queryForStream("""
-                        select * from users order by user_id;
-                        """,
-                (rs, rowNum) ->
-                        new User(
-                                rs.getInt("user_id"),
-                                rs.getString("email"),
-                                rs.getString("login"),
-                                rs.getString("name"),
-                                rs.getDate("birthday")
-                        )
-        )
-                .map(this::setFriends)
-                .collect(Collectors.toList());
+        String sql = "SELECT * From USERS ";
+        List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
+        return users;
+//        return jdbcTemplate.queryForStream("""
+//                        select * from users order by user_id;
+//                        """,
+//                (rs, rowNum) ->
+//                        new User(
+//                                rs.getInt("user_id"),
+//                                rs.getString("email"),
+//                                rs.getString("login"),
+//                                rs.getString("name"),
+//                                rs.getDate("birthday")
+//                        )
+//        )
+//             .map(user -> setFriends(user))
+//                .collect(Collectors.toList());
     }
 
     @Override
@@ -142,14 +147,11 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User setFriends(User user) {
-        Set<Integer> setOfFriends = getFriends(user.getId())
-                .stream()
-                .map(user1 -> user1.getId())
-                .collect(Collectors.toSet());
-        if (setOfFriends.isEmpty()) {
-            return user;
-        }
-        user.setFriends(setOfFriends);
+        String sql = "SELECT USER_ID From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + user.getId() + ");";
+        List<Integer> users = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user_id"));
+       if(!users.isEmpty()) {
+           user.setFriends(new HashSet<>(users));
+       }
         return user;
     }
 }

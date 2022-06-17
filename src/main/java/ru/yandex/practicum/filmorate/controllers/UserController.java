@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        return userStorage.getAll();
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
@@ -63,7 +63,7 @@ public class UserController {
     public User put(@Valid @RequestBody User user) {
         UserValidatior.validate(user);
         log.info("Добавляемый user: {}", user);
-        return userStorage.put(user);
+        return userService.put(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

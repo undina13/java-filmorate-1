@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
 
+import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,11 +29,10 @@ public class GenreStorage {
                     genreRows.getInt("genre_id"),
                     genreRows.getString("name")
             );
-
             return genre;
-        } else {
-            return null;
         }
+
+       return null;
     }
 
     public List<Genre> getAll() {

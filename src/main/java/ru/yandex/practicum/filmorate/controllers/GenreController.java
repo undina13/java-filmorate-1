@@ -30,9 +30,9 @@ public class GenreController {
     public Collection<Genre> findAll() {
         return genreService.getAll();
     }
+
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable int id){
-
         return genreService.getById(id);
     }
 
