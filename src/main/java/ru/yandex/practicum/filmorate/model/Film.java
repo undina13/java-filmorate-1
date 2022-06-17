@@ -4,8 +4,10 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 
+import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalDate;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,26 +21,26 @@ public class Film {
    @Size(max = 200)
    private  String description;
 
-   private LocalDate releaseDate;
+   private Date releaseDate;
 
-   private Duration duration;
+   private Integer duration;
 
    private Set<Integer> likes;
 
    private Set<Genre> genres;
 
-   private MPAA rating;
+   private MPAA mpa;
 
 
 
-   public Film(int id, String name, String description, LocalDate releaseDate, Duration duration, MPAA MPAA) {
+   public Film(int id, String name, String description, Date releaseDate, Integer duration, MPAA mpa) {
       this.id = id;
       this.name = name;
       this.description = description;
       this.releaseDate = releaseDate;
       this.duration = duration;
-      this.likes = new HashSet<>();
-      this.genres = new HashSet<>();
-      this.rating = MPAA;
+    //  this.likes = new HashSet<>();
+    // this.genres = new HashSet<>();
+      this.mpa = mpa;
    }
 }

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controllers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ public class UserControllerTest {
     @Autowired
     UserController userController;
     @Autowired
+    @Qualifier("userDbStorage")
     UserStorage userStorage;
     @Autowired
     private MockMvc mockMvc;

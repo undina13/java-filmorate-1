@@ -5,14 +5,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
+import ru.yandex.practicum.filmorate.service.UserDBService;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Set;
@@ -25,13 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class FilmsLikesTest {
     @Autowired
-    FilmController filmService;
+    FilmDbService filmDbService;
     @Autowired
-    FilmStorage filmStorage;
+    FilmDbStorage filmStorage;
     @Autowired
-    UserStorage userStorage;
+    UserDbStorage userStorage;
     @Autowired
-    UserService userService;
+    UserDBService userService;
     @Autowired
     private MockMvc mockMvc;
 
@@ -69,7 +74,7 @@ public class FilmsLikesTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/films/1/like/1"))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(filmService.getFilmById(1).getLikes(), Set.of(1));
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1));
     }
 
     @Test
@@ -88,20 +93,20 @@ public class FilmsLikesTest {
 
     @Test
     public void deleteLikeAllOk() throws Exception {
-        filmService.putLike(1, 1);
-        filmService.putLike(1, 2);
-        Assertions.assertEquals(filmService.getFilmById(1).getLikes(), Set.of(1, 2));
+        filmDbService.putLike(1, 1);
+        filmDbService.putLike(1, 2);
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1, 2));
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/films/1/like/1"))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(filmService.getFilmById(1).getLikes(), Set.of(2));
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(2));
     }
 
     @Test
     public void deleteLikeBadFilm() throws Exception {
-        filmService.putLike(1, 1);
-        filmService.putLike(1, 2);
-        Assertions.assertEquals(filmService.getFilmById(1).getLikes(), Set.of(1, 2));
+        filmDbService.putLike(1, 1);
+        filmDbService.putLike(1, 2);
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1, 2));
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/films/16/like/1"))
                 .andExpect(status().isNotFound());
@@ -109,9 +114,9 @@ public class FilmsLikesTest {
 
     @Test
     public void deleteLikeBadUser() throws Exception {
-        filmService.putLike(1, 1);
-        filmService.putLike(1, 2);
-        Assertions.assertEquals(filmService.getFilmById(1).getLikes(), Set.of(1, 2));
+        filmDbService.putLike(1, 1);
+        filmDbService.putLike(1, 2);
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1, 2));
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/films/1/like/13"))
                 .andExpect(status().isNotFound());
@@ -119,16 +124,16 @@ public class FilmsLikesTest {
 
     @Test
     public void getPopular() throws Exception {
-        filmService.putLike(1, 1);
-        filmService.putLike(1, 2);
-        filmService.putLike(2, 3);
-        filmService.putLike(2, 4);
-        filmService.putLike(2, 5);
-        filmService.putLike(6, 6);
-        filmService.putLike(7, 7);
-        filmService.putLike(8, 8);
-        filmService.putLike(9, 9);
-        filmService.putLike(10, 10);
+        filmDbService.putLike(1, 1);
+        filmDbService.putLike(1, 2);
+        filmDbService.putLike(2, 3);
+        filmDbService.putLike(2, 4);
+        filmDbService.putLike(2, 5);
+        filmDbService.putLike(6, 6);
+        filmDbService.putLike(7, 7);
+        filmDbService.putLike(8, 8);
+        filmDbService.putLike(9, 9);
+        filmDbService.putLike(10, 10);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/films/popular?count=5"))
                 .andExpect(status().isOk())
@@ -141,16 +146,16 @@ public class FilmsLikesTest {
 
     @Test
     public void getPopularWithoutCount() throws Exception {
-        filmService.putLike(1, 1);
-        filmService.putLike(2, 2);
-        filmService.putLike(3, 3);
-        filmService.putLike(4, 4);
-        filmService.putLike(5, 5);
-        filmService.putLike(6, 6);
-        filmService.putLike(7, 7);
-        filmService.putLike(8, 8);
-        filmService.putLike(9, 9);
-        filmService.putLike(10, 10);
+        filmDbService.putLike(1, 1);
+        filmDbService.putLike(2, 2);
+        filmDbService.putLike(3, 3);
+        filmDbService.putLike(4, 4);
+        filmDbService.putLike(5, 5);
+        filmDbService.putLike(6, 6);
+        filmDbService.putLike(7, 7);
+        filmDbService.putLike(8, 8);
+        filmDbService.putLike(9, 9);
+        filmDbService.putLike(10, 10);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/films/popular"))
                 .andExpect(status().isOk())

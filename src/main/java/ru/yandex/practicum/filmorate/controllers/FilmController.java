@@ -3,9 +3,11 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
@@ -20,53 +22,51 @@ import java.util.List;
 @Getter
 public class FilmController {
 
-    FilmStorage filmStorage;
-    FilmService filmService;
+   FilmDbService filmDbService;
     FilmValidator filmValidator;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
-        this.filmService = filmService;
+    public FilmController(FilmDbService filmDbService) {
+        this.filmDbService = filmDbService;
     }
 
     @GetMapping
     public Collection<Film> findAll() {
-        return filmStorage.getAll();
+        return filmDbService.getAll();
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable int id){
-        return filmStorage.get(id);
+        return filmDbService.get(id);
     }
 
     @GetMapping("/popular")
     public List<Film> getPopular(@RequestParam(defaultValue = "10") int count){
-        return filmService.getBestFilms(count);
+        return filmDbService.getBestFilms(count);
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        filmValidator.validate(film);
+    // filmValidator.validate(film);
         log.info("Добавляемый film: {}", film);
-        return filmStorage.create(film);
+        return filmDbService.create(film);
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        filmValidator.validate(film);
+   //   filmValidator.validate(film);
         log.info("Изменяемый film: {}", film);
-        return filmStorage.put(film);
+        return filmDbService.put(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void putLike(@PathVariable int id, @PathVariable int userId){
-        filmService.putLike(id, userId);
+        filmDbService.putLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId){
-        filmService.deleteLike(id, userId);
+        filmDbService.deleteLike(id, userId);
     }
 
 

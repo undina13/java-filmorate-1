@@ -4,9 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage{
@@ -30,15 +28,35 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User get(int id) {
+    public Optional<User> get(int id) {
         if(!users.containsKey(id)){
             throw new UserNotFoundException("User with id = " + id + " not found");
         }
-        return users.get(id);
+        return Optional.of(users.get(id));
     }
 
     @Override
     public void deleteAll() {
         users.clear();
+    }
+
+    @Override
+    public List<User> getFriends(int id) {
+        return null;
+    }
+
+    @Override
+    public void addFriends(int id, int friendId) {
+
+    }
+
+    @Override
+    public void deleteFriends(int id, int friendId) {
+
+    }
+
+    @Override
+    public List<User> getCommonFriends(int id, int otherId) {
+        return null;
     }
 }

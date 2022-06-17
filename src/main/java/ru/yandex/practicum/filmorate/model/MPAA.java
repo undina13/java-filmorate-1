@@ -1,9 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
-public enum MPAA {
-    G,
-    PG,
-    PG13,
-    R,
-    NC17
+import lombok.Data;
+
+@Data
+public class MPAA {
+    int id;
+    String name;
+
+    public MPAA(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

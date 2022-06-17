@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserDBService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidatior;
@@ -12,6 +14,7 @@ import ru.yandex.practicum.filmorate.validator.UserValidatior;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -20,11 +23,11 @@ import java.util.List;
 public class UserController {
 
     UserStorage userStorage;
-    UserService userService;
+   UserDBService userService;
     UserValidatior userValidatior;
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
+    public UserController(@Qualifier("userDbStorage") UserStorage userStorage, UserDBService userService) {
         this.userStorage = userStorage;
         this.userService = userService;
     }
@@ -35,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id){
+    public Optional<User> getUserById(@PathVariable int id){
         return userStorage.get(id);
     }
 
