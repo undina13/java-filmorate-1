@@ -16,7 +16,6 @@ public class FilmService {
 
     FilmStorage filmStorage;
 
-
     UserStorage userStorage;
 
 
@@ -25,14 +24,6 @@ public class FilmService {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
-
-//    public void putLike(int filmId, int userId) {
-//        filmStorage.get(filmId).getLikes().add(userStorage.get(userId).getId());
-//    }
-//
-//    public void deleteLike(int filmId, int userId) {
-//        filmStorage.get(filmId).getLikes().remove(userStorage.get(userId).getId());
-//    }
 
     public List<Film> getBestFilms(int count) {
         List<Film> films = new ArrayList<>(filmStorage.getAll());

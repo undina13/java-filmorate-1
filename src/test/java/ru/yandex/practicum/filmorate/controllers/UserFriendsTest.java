@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,7 +27,8 @@ public class UserFriendsTest {
     UserDbStorage userStorage;
     @Autowired
     private MockMvc mockMvc;
-   @Test
+
+    @Test
     void getCommonFriends() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/users/1/friends/common/2"))
@@ -41,7 +41,7 @@ public class UserFriendsTest {
 
     @Test
     void getFriends() throws Exception {
-                mockMvc.perform(
+        mockMvc.perform(
                 MockMvcRequestBuilders.get("/users/1/friends"))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -57,15 +57,14 @@ public class UserFriendsTest {
                 MockMvcRequestBuilders.put("/users/3/friends/1"))
                 .andExpect(status().isOk());
 
-            mockMvc.perform(
-                    MockMvcRequestBuilders.get("/users/3/friends"))
-                    .andExpect(status().isOk())
-                    .andDo(print())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(content()
-                            .json("[{\"id\":1,\"email\":\"user1@mail.ru\",\"login\":\"user1\",\"name\":\"user1name\",\"birthday\":\"2000-10-10\",\"friends\":[2,3]}]"));
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/users/3/friends"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[{\"id\":1,\"email\":\"user1@mail.ru\",\"login\":\"user1\",\"name\":\"user1name\",\"birthday\":\"2000-10-10\",\"friends\":[2,3]}]"));
     }
-
 
     @Test
     @DirtiesContext

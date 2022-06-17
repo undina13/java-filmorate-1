@@ -34,6 +34,7 @@ public class MpaaControllerTest {
                 .andExpect(content()
                         .json("[{\"id\":1,\"name\":\"G\"},{\"id\":2,\"name\":\"PG\"},{\"id\":3,\"name\":\"PG-13\"},{\"id\":4,\"name\":\"R\"},{\"id\":5,\"name\":\"NC-17\"}]"));
     }
+
     @Test
     void findById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/mpa/2"))

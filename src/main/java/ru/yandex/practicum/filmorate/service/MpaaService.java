@@ -17,13 +17,13 @@ public class MpaaService {
         this.mpaaDbStorage = mpaaDbStorage;
     }
 
-    public  Collection<MPAA> getAll() {
+    public Collection<MPAA> getAll() {
         return mpaaDbStorage.getAll();
     }
 
-    public MPAA getById(int id){
-        if(id <1){
-            throw  new UserNotFoundException("not found mpaa id");
+    public MPAA getById(int id) {
+        if (id < 1) {
+            throw new UserNotFoundException("not found mpaa id");
         }
         return mpaaDbStorage.getById(id);
     }

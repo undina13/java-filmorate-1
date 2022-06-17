@@ -9,14 +9,13 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -37,7 +36,7 @@ public class UserDbStorage implements UserStorage {
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
             stmt.setString(3, user.getName());
-            stmt.setDate(4, user.getBirthday());
+            stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, keyHolder);
         user.setId(keyHolder.getKey().intValue());
@@ -62,20 +61,6 @@ public class UserDbStorage implements UserStorage {
         String sql = "SELECT * From USERS ";
         List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
         return users;
-//        return jdbcTemplate.queryForStream("""
-//                        select * from users order by user_id;
-//                        """,
-//                (rs, rowNum) ->
-//                        new User(
-//                                rs.getInt("user_id"),
-//                                rs.getString("email"),
-//                                rs.getString("login"),
-//                                rs.getString("name"),
-//                                rs.getDate("birthday")
-//                        )
-//        )
-//             .map(user -> setFriends(user))
-//                .collect(Collectors.toList());
     }
 
     @Override
@@ -87,7 +72,7 @@ public class UserDbStorage implements UserStorage {
                     userRows.getString("email"),
                     userRows.getString("login"),
                     userRows.getString("name"),
-                    userRows.getDate("birthday")
+                    userRows.getDate("birthday").toLocalDate()
             );
             log.info("Найден пользователь: {} {}", user.getId(), user.getName());
             setFriends(user);
@@ -96,11 +81,6 @@ public class UserDbStorage implements UserStorage {
             log.info("Пользователь с идентификатором {} не найден.", id);
             throw new UserNotFoundException("Пользователь с идентификатором " + id + " не найден.");
         }
-    }
-
-    @Override
-    public void deleteAll() {
-
     }
 
     @Override
@@ -140,18 +120,19 @@ public class UserDbStorage implements UserStorage {
                 rs.getString("email"),
                 rs.getString("login"),
                 rs.getString("name"),
-                rs.getDate("birthday")
+                rs.getDate("birthday").toLocalDate()
         );
         setFriends(user);
         return user;
     }
 
     private User setFriends(User user) {
-        String sql = "SELECT USER_ID From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + user.getId() + ");";
+        String sql = "SELECT USER_ID From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + user
+                .getId() + ");";
         List<Integer> users = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user_id"));
-       if(!users.isEmpty()) {
-           user.setFriends(new HashSet<>(users));
-       }
+        if (!users.isEmpty()) {
+            user.setFriends(new HashSet<>(users));
+        }
         return user;
     }
 }

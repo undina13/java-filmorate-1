@@ -26,7 +26,7 @@ public class GenreControllerTest {
 
     @Test
     void findAll() throws Exception {
-             mockMvc.perform(MockMvcRequestBuilders.get("/genres"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/genres"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

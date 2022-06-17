@@ -38,11 +38,6 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public void deleteAll() {
-        films.clear();
-    }
-
-    @Override
     public List<Film> getBestFilms(int count) {
         return null;
     }
@@ -56,6 +51,4 @@ public class InMemoryFilmStorage implements FilmStorage{
     public void deleteLike(int filmId, int userId) {
 
     }
-
-
 }

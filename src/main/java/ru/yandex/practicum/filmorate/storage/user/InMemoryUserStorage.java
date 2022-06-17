@@ -36,11 +36,6 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public void deleteAll() {
-        users.clear();
-    }
-
-    @Override
     public List<User> getFriends(int id) {
         return null;
     }

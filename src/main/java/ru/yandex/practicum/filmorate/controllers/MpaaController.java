@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.service.MpaaService;
 
@@ -30,10 +28,9 @@ public class MpaaController {
     public Collection<MPAA> findAll() {
         return mpaaService.getAll();
     }
-    @GetMapping("/{id}")
-    public MPAA getMpaaById(@PathVariable int id){
 
+    @GetMapping("/{id}")
+    public MPAA getMpaaById(@PathVariable int id) {
         return mpaaService.getById(id);
     }
-
 }

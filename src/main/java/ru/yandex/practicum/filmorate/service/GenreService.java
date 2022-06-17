@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.Collection;
@@ -22,9 +21,9 @@ public class GenreService {
         return genreStorage.getAll();
     }
 
-    public Genre getById(int id){
-        if(id <1){
-            throw  new UserNotFoundException("not found genre id");
+    public Genre getById(int id) {
+        if (id < 1) {
+            throw new UserNotFoundException("not found genre id");
         }
         return genreStorage.getById(id);
     }

@@ -14,9 +14,6 @@ public interface FilmStorage {
 
     Film get(int id);
 
-    //for testing
-    void deleteAll();
-
     List<Film> getBestFilms(int count);
 
     void putLike(int filmId, int userId);

@@ -20,44 +20,48 @@ public class UserDBService {
     public UserDBService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-public Collection<User> getAll(){
+
+    public Collection<User> getAll() {
         return userStorage.getAll();
-}
-   public Optional<User> get(int id){
-        if(id <= 0 ){
-            throw new UserNotFoundException("Неверный айди юзера");
-        }
-        else
-        return userStorage.get(id);
     }
 
+    public Optional<User> get(int id) {
+        if (id <= 0) {
+            throw new UserNotFoundException("Неверный айди юзера");
+        } else
+            return userStorage.get(id);
+    }
 
     public List<User> getFriends(int id) {
         return userStorage.getFriends(id);
     }
 
     public void addFriends(int id, int friendId) {
-        if(id < 1 || friendId < 1){
-            throw  new UserNotFoundException("user not found");
+        if (id < 1 || friendId < 1) {
+            throw new UserNotFoundException("user not found");
         }
         userStorage.addFriends(id, friendId);
     }
 
     public void deleteFriends(int id, int friendId) {
-        if(id < 1 || friendId < 1){
-            throw  new UserNotFoundException("user not found");
+        if (id < 1 || friendId < 1) {
+            throw new UserNotFoundException("user not found");
         }
         userStorage.deleteFriends(id, friendId);
     }
 
     public List<User> getCommonFriends(int id, int otherId) {
-        if(id < 1 || otherId < 1){
-            throw  new UserNotFoundException("user not found");
+        if (id < 1 || otherId < 1) {
+            throw new UserNotFoundException("user not found");
         }
-       return userStorage.getCommonFriends(id, otherId);
+        return userStorage.getCommonFriends(id, otherId);
     }
 
     public User put(User user) {
         return userStorage.put(user);
+    }
+
+    public User create(User user) {
+        return userStorage.create(user);
     }
 }
