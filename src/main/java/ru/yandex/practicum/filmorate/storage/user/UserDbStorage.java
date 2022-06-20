@@ -90,22 +90,7 @@ public class UserDbStorage implements UserStorage {
         return users;
     }
 
-    @Override
-    public void addFriends(int id, int friendId) {
-        String sql1Query = "insert into FRIENDS(USER_ID, FRIEND_ID)  " +
-                "values (?, ?)";
-        jdbcTemplate.update(sql1Query,
-                id,
-                friendId);
-    }
 
-    @Override
-    public void deleteFriends(int id, int friendId) {
-        String sql1Query = "delete from FRIENDS where USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sql1Query,
-                id,
-                friendId);
-    }
 
     @Override
     public List<User> getCommonFriends(int id, int otherId) {

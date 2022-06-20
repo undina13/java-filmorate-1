@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
@@ -15,10 +16,12 @@ import java.util.Optional;
 public class UserDBService {
 
     UserStorage userStorage;
+    FriendsStorage friendsStorage;
 
     @Autowired
-    public UserDBService(@Qualifier("userDbStorage") UserStorage userStorage) {
+    public UserDBService( UserStorage userStorage, FriendsStorage friendsStorage ) {
         this.userStorage = userStorage;
+        this.friendsStorage = friendsStorage;
     }
 
     public Collection<User> getAll() {
@@ -40,14 +43,14 @@ public class UserDBService {
         if (id < 1 || friendId < 1) {
             throw new UserNotFoundException("user not found");
         }
-        userStorage.addFriends(id, friendId);
+       friendsStorage.addFriends(id, friendId);
     }
 
     public void deleteFriends(int id, int friendId) {
         if (id < 1 || friendId < 1) {
             throw new UserNotFoundException("user not found");
         }
-        userStorage.deleteFriends(id, friendId);
+        friendsStorage.deleteFriends(id, friendId);
     }
 
     public List<User> getCommonFriends(int id, int otherId) {

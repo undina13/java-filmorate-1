@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
+import ru.yandex.practicum.filmorate.storage.GenreFilmStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -23,10 +24,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final GenreFilmStorage genreFilmStorage;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreFilmStorage genreFilmStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.genreFilmStorage = genreFilmStorage;
     }
 
     @Override
@@ -46,11 +49,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(filmId);
         if (film.getGenres() != null) {
             for (Genre genre : film.getGenres()) {
-                String sql1Query = "insert into GENRE_FILM(GENRE_ID, FILM_ID)  " +
-                        "values (?, ?)";
-                jdbcTemplate.update(sql1Query,
-                        genre.getId(),
-                        filmId);
+                genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
         return film;
@@ -67,18 +66,12 @@ public class FilmDbStorage implements FilmStorage {
                 , film.getMpa().getId()
                 , film.getId());
         if (film.getGenres() != null) {
-            String sql2Query = "delete from GENRE_FILM where  FILM_ID = ?";
-            jdbcTemplate.update(sql2Query,
-                    film.getId());
+            genreFilmStorage.deleteGenresByFilm(film.getId());
             TreeSet<Genre> genresSet = new TreeSet<>(Comparator.comparing(Genre::getId));
             genresSet.addAll(film.getGenres());
             film.setGenres(genresSet);
             for (Genre genre : genresSet) {
-                String sql1Query = "insert into GENRE_FILM(GENRE_ID, FILM_ID)   " +
-                        "values  (?, ?) ";
-                jdbcTemplate.update(sql1Query,
-                        genre.getId(),
-                        film.getId());
+                genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
         if (test != 1) {
@@ -139,23 +132,6 @@ public class FilmDbStorage implements FilmStorage {
             films = films.subList(0, count);
         }
         return films;
-    }
-
-    @Override
-    public void putLike(int filmId, int userId) {
-        String sql1Query = "insert into LIKES(USER_ID, FILM_ID)  " +
-                "values (?, ?)";
-        jdbcTemplate.update(sql1Query,
-                userId,
-                filmId);
-    }
-
-    @Override
-    public void deleteLike(int filmId, int userId) {
-        String sql1Query = "delete from LIKES where USER_ID = ? and  FILM_ID = ? ";
-        jdbcTemplate.update(sql1Query,
-                userId,
-                filmId);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
