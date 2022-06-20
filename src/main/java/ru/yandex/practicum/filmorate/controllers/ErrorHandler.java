@@ -19,8 +19,6 @@ public class ErrorHandler {
         return "Sorry, some validation error";
     }
 
-
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class})
     public String NotFoundException(final Exception e){

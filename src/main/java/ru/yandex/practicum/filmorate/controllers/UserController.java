@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.service.UserDBService;
 import ru.yandex.practicum.filmorate.validator.UserValidatior;
 
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -19,33 +19,31 @@ import java.util.List;
 @Getter
 public class UserController {
 
-    UserStorage userStorage;
-    UserService userService;
+    UserDBService userService;
     UserValidatior userValidatior;
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
+    public UserController(UserDBService userService) {
         this.userService = userService;
     }
 
     @GetMapping
     public Collection<User> findAll() {
-        return userStorage.getAll();
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id){
-        return userStorage.get(id);
+    public Optional<User> getUserById(@PathVariable int id) {
+        return userService.get(id);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getUserFriends(@PathVariable int id){
+    public List<User> getUserFriends(@PathVariable int id) {
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId){
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 
@@ -53,23 +51,23 @@ public class UserController {
     public User create(@Valid @RequestBody User user) {
         UserValidatior.validate(user);
         log.info("Добавляемый user: {}", user);
-        return userStorage.create(user);
+        return userService.create(user);
     }
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
         UserValidatior.validate(user);
         log.info("Добавляемый user: {}", user);
-        return userStorage.put(user);
+        return userService.put(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void putFriends(@PathVariable int id, @PathVariable int friendId){
+    public void putFriends(@PathVariable int id, @PathVariable int friendId) {
         userService.addFriends(id, friendId);
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
-    public void deleteFriends(@PathVariable int id, @PathVariable int friendId){
+    public void deleteFriends(@PathVariable int id, @PathVariable int friendId) {
         userService.deleteFriends(id, friendId);
     }
 }
