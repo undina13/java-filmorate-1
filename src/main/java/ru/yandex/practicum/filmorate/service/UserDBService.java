@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.EventStorage;
 import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -17,11 +19,13 @@ public class UserDBService {
 
     UserStorage userStorage;
     FriendsStorage friendsStorage;
+    EventStorage eventStorage;
 
     @Autowired
-    public UserDBService( UserStorage userStorage, FriendsStorage friendsStorage ) {
+    public UserDBService(UserStorage userStorage, FriendsStorage friendsStorage, EventStorage eventStorage) {
         this.userStorage = userStorage;
         this.friendsStorage = friendsStorage;
+        this.eventStorage = eventStorage;
     }
 
     public Collection<User> getAll() {
@@ -66,5 +70,9 @@ public class UserDBService {
 
     public User create(User user) {
         return userStorage.create(user);
+    }
+
+    public List<Event> getEventByUserId(int id) {
+      return  eventStorage.getEventByUserId(id);
     }
 }
