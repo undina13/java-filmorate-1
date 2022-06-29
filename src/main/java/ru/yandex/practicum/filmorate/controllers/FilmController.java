@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,8 +38,10 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count){
-        return filmDbService.getBestFilms(count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count,
+                                 @RequestParam(required = false) Integer genreId,
+                                 @RequestParam(required = false) Integer year){
+        return filmDbService.getBestFilms(count,genreId,year);
     }
 
     @PostMapping

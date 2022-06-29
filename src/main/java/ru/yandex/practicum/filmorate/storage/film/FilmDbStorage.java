@@ -85,17 +85,17 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.queryForStream(
                         "select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id"
                         ,
-                (rs, rowNum) ->
-                        new Film(
-                                rs.getInt("film_id"),
-                                rs.getString("name"),
-                                rs.getString("description"),
-                                rs.getDate("release_Date").toLocalDate(),
-                                rs.getInt("duration"),
-                                new MPAA(rs.getInt("mpaa_id"),
-                                        rs.getString(8))
-                        )
-        )
+                        (rs, rowNum) ->
+                                new Film(
+                                        rs.getInt("film_id"),
+                                        rs.getString("name"),
+                                        rs.getString("description"),
+                                        rs.getDate("release_Date").toLocalDate(),
+                                        rs.getInt("duration"),
+                                        new MPAA(rs.getInt("mpaa_id"),
+                                                rs.getString(8))
+                                )
+                )
                 .map(this::setGenre)
                 .map(this::setLikes)
                 .collect(Collectors.toList());
@@ -122,16 +122,54 @@ public class FilmDbStorage implements FilmStorage {
         throw new FilmNotFoundException("Фильмы не найдены");
     }
 
-    public List<Film> getBestFilms(int count) {
-        String sql = "select * from film JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID  GROUP BY LIKES.FILM_ID, PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC";
+    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
+        String sql = "select * from film JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID " +
+                " GROUP BY LIKES.FILM_ID, PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC";
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
+        List<Film> filmsByGenreId = new ArrayList<>();
         if (films.isEmpty()) {
             films = new ArrayList<>(getAll());
         }
-        if (films.size() > count) {
-            films = films.subList(0, count);
+        if (genreId == null && year == null) {
+            if (films.size() > count) {
+                films = films.subList(0, count);
+            }
+            return films;
         }
-        return films;
+        if (genreId != null && year == null) {
+            for (Film film : films) {
+                if (film.getGenres() != null) {
+                    for (Genre genre : film.getGenres()) {
+                        if (genre.getId() == genreId) {
+                            filmsByGenreId.add(film);
+                        }
+                    }
+                    return filmsByGenreId;
+                }
+            }
+            return filmsByGenreId;
+        }
+        if (genreId == null && year != null) {
+            List<Film> filmsByYear = films.stream()
+                    .filter(film -> film.getReleaseDate().getYear() == year)
+                    .collect(Collectors.toList());
+            return filmsByYear;
+        } else {
+            for (Film film : films) {
+                if (film.getGenres() != null) {
+                    for (Genre genre : film.getGenres()) {
+                        if (genre.getId() == genreId) {
+                            filmsByGenreId.add(film);
+                        }
+                    }
+                    return filmsByGenreId;
+                }
+            }
+            List<Film> filmsByYear = filmsByGenreId.stream()
+                    .filter(film -> film.getReleaseDate().getYear() == year)
+                    .collect(Collectors.toList());
+            return filmsByYear;
+        }
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
