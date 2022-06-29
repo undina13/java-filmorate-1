@@ -6,15 +6,15 @@ import lombok.Data;
 @Data
 @Builder
 public class Review {
-    private int reviewId;
+    private int id;
     private String content;
-    private boolean isPositive;
-    private int userId;
-    private int filmId;
+    private Boolean isPositive;
+    private Integer userId;
+    private Integer filmId;
     private int useful;
 
-    public Review(int reviewId, String content, boolean isPositive, int userId, int filmId, int useful) {
-        this.reviewId = reviewId;
+    public Review(int id, String content, Boolean isPositive, int userId, int filmId, int useful) {
+        this.id = id;
         this.content = content;
         this.isPositive = isPositive;
         this.userId = userId;

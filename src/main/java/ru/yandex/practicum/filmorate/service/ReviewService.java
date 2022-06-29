@@ -2,22 +2,20 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
     private ReviewStorage reviewStorage;
-
     @Autowired
     public ReviewService(ReviewStorage reviewStorage) {
         this.reviewStorage = reviewStorage;
     }
-
 
     public Optional<Review> getReviewById(Integer reviewId) {
         return reviewStorage.getReviewById(reviewId);
@@ -51,11 +49,10 @@ public class ReviewService {
         reviewStorage.putLikeReviewById(reviewId, userId);
     }
 
-    public Collection<Review> getReviewsFilmById(Integer count) {
-        return reviewStorage.getReviewsFilmById(count);
-    }
-
-    public Collection<Review> findAll() {
-        return reviewStorage.findAll();
+    public Collection<Review> getReviewsFilmById(Integer filmId, Integer count) {
+        return reviewStorage.getReviewsFilmById(filmId, count)
+                .stream()
+                .sorted((o1, o2) -> o2.getUseful() - o1.getUseful())
+                .collect(Collectors.toList());
     }
 }
