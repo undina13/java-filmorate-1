@@ -48,6 +48,9 @@ public class FilmDbStorage implements FilmStorage {
         int filmId = keyHolder.getKey().intValue();
         film.setId(filmId);
         if (film.getGenres() != null) {
+            TreeSet<Genre> genresSet = new TreeSet<>(Comparator.comparing(Genre::getId));
+            genresSet.addAll(film.getGenres());
+            film.setGenres(genresSet);
             for (Genre genre : film.getGenres()) {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }

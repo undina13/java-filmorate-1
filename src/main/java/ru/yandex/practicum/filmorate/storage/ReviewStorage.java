@@ -105,12 +105,13 @@ public class ReviewStorage {
                     review.getIsPositive(),
                     review.getId());
 
+            Review review1 = getReviewById(review.getId()).get();
             eventStorage.createEvent(new Event(0,
                     LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
-                    review.getUserId(),
+                    review1.getUserId(),
                     EventType.REVIEW,
                     Operation.UPDATE,
-                    review.getId()));
+                    review1.getId()));
             return review;
         } else {
             throw new ReviewNotFoundException("Такого обзора нет");
