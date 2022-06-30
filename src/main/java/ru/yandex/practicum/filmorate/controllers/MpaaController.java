@@ -17,7 +17,7 @@ import java.util.Collection;
 @Slf4j
 @Getter
 public class MpaaController {
-    MpaaService mpaaService;
+    private MpaaService mpaaService;
 
     @Autowired
     public MpaaController(MpaaService mpaaService) {

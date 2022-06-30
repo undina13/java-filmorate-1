@@ -20,8 +20,8 @@ import java.util.Optional;
 @Getter
 public class UserController {
 
-    UserDBService userService;
-    UserValidatior userValidatior;
+    private UserDBService userService;
+    private UserValidatior userValidatior;
 
     @Autowired
     public UserController(UserDBService userService) {

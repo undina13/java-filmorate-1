@@ -19,7 +19,7 @@ import java.util.Collection;
 @Slf4j
 @Getter
 public class GenreController {
-    GenreService genreService;
+    private GenreService genreService;
 
     @Autowired
     public GenreController(GenreService genreService) {
@@ -32,7 +32,7 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public Genre getGenreById(@PathVariable int id){
+    public Genre getGenreById(@PathVariable int id) {
         return genreService.getById(id);
     }
 

@@ -18,8 +18,8 @@ import java.util.List;
 @Getter
 public class FilmController {
 
-   FilmDbService filmDbService;
-    FilmValidator filmValidator;
+    private FilmDbService filmDbService;
+    private FilmValidator filmValidator;
 
     @Autowired
     public FilmController(FilmDbService filmDbService) {
@@ -32,18 +32,20 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable int id){
+    public Film getFilmById(@PathVariable int id) {
         return filmDbService.get(id);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count){
-        return filmDbService.getBestFilms(count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count,
+                                 @RequestParam(required = false) Integer genreId,
+                                 @RequestParam(required = false) Integer year) {
+        return filmDbService.getBestFilms(count, genreId, year);
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-     filmValidator.validate(film);
+        filmValidator.validate(film);
 
         log.info("Добавляемый film: {}", film);
         return filmDbService.create(film);
@@ -51,19 +53,19 @@ public class FilmController {
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-     filmValidator.validate(film);
+        filmValidator.validate(film);
 
         log.info("Изменяемый film: {}", film);
         return filmDbService.put(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void putLike(@PathVariable int id, @PathVariable int userId){
+    public void putLike(@PathVariable int id, @PathVariable int userId) {
         filmDbService.putLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId){
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         filmDbService.deleteLike(id, userId);
     }
 
