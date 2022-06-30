@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserDBService;
 import ru.yandex.practicum.filmorate.validator.UserValidatior;
@@ -35,6 +36,11 @@ public class UserController {
     @GetMapping("/{id}")
     public Optional<User> getUserById(@PathVariable int id) {
         return userService.get(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getEventByUserId(@PathVariable int id) {
+        return userService.getEventByUserId(id);
     }
 
     @GetMapping("/{id}/friends")
@@ -70,4 +76,6 @@ public class UserController {
     public void deleteFriends(@PathVariable int id, @PathVariable int friendId) {
         userService.deleteFriends(id, friendId);
     }
+
+
 }
