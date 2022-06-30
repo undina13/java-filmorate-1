@@ -23,10 +23,10 @@ public class EventStorage {
 
     public void createEvent(Event event) {
         String sqlQuery = "insert into events (timestamp, user_id, event_type, operation, entity_id) values(?, ?, ?, ?, ?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"event_id"});
-            stmt.setTimestamp(1, event.getTimestamp());
+            stmt.setLong(1, event.getTimestamp());
             stmt.setInt(2, event.getUserId());
             stmt.setString(3, event.getEventType().toString());
             stmt.setString(4, event.getOperation().toString());
@@ -45,7 +45,7 @@ public class EventStorage {
     private Event makeEvent(ResultSet rs) throws SQLException {
         Event event = new Event(
                 rs.getInt("event_id"),
-                rs.getTimestamp("timestamp"),
+                rs.getLong("timestamp"),
                 rs.getInt("user_id"),
                 EventType.valueOf(rs.getString("event_type")),
                 Operation.valueOf(rs.getString("operation")),

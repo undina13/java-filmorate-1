@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Component
 @Slf4j
@@ -30,7 +32,7 @@ public class LikeStorage {
                 filmId);
 
        eventStorage.createEvent(new Event(0,
-               new Timestamp(System.currentTimeMillis()),
+               LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                userId,
                EventType.LIKE,
                Operation.ADD,
@@ -45,7 +47,7 @@ public class LikeStorage {
                 filmId);
 
         eventStorage.createEvent(new Event(0,
-                new Timestamp(System.currentTimeMillis()),
+                LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                 userId,
                 EventType.LIKE,
                 Operation.REMOVE,
