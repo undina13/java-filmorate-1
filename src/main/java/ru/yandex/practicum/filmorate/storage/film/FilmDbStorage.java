@@ -82,9 +82,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAll() {
-        return jdbcTemplate.queryForStream("""
-                        select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id ;
-                        """,
+        return jdbcTemplate.queryForStream(
+                        "select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id"
+                        ,
                 (rs, rowNum) ->
                         new Film(
                                 rs.getInt("film_id"),
