@@ -134,6 +134,23 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    @Override
+    public Collection<Film> search(String query, List<String> by) {
+        String sql = "";
+        if(by.containsAll(List.of("director", "title"))) {
+         //    sql =  "SELECT  * FROM FILM WHERE NAME  like (%" + query + "%)";
+        }
+        else if(by.containsAll(List.of( "title"))){
+          sql =  "SELECT  * FROM FILM WHERE NAME  like (%" + query + "%)";
+        }
+        List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
+        if (films.isEmpty()) {
+            films = new ArrayList<>(getAll());
+        }
+
+        return films;
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         Film film = new Film(
                 rs.getInt("film_id"),

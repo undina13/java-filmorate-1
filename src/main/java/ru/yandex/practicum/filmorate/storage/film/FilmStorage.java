@@ -17,4 +17,5 @@ public interface FilmStorage {
     List<Film> getBestFilms(int count);
 
 
+    Collection<Film> search(String query, List<String> by);
 }
