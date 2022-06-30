@@ -67,5 +67,9 @@ public class FilmController {
         filmDbService.deleteLike(id, userId);
     }
 
+    @GetMapping("/search")
+    public Collection<Film> search(@RequestParam String query, @RequestParam String by) {
+        return filmDbService.search();
+    }
 
 }

@@ -57,4 +57,7 @@ public class FilmDbService {
         }
         likeStorage.deleteLike(filmId, userId);
     }
+
+    public Collection<Film> search() {
+    }
 }
