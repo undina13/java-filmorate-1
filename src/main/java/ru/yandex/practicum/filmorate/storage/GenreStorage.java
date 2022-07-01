@@ -14,13 +14,15 @@ import java.util.List;
 @Slf4j
 public class GenreStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final String GENRE_GET_SQL = "select * from GENRE where GENRE_ID = ?";
+    private final String GENRE_ALL_SQL = "select * from GENRE";
 
     public GenreStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public Genre getById(int id) {
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("select * from GENRE where GENRE_ID = ?", id);
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet(GENRE_GET_SQL, id);
         if (genreRows.next()) {
             Genre genre = new Genre(
                     genreRows.getInt("genre_id"),
@@ -32,8 +34,7 @@ public class GenreStorage {
     }
 
     public List<Genre> getAll() {
-        String sql = "select * from GENRE";
-        List<Genre> genres = jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs));
+        List<Genre> genres = jdbcTemplate.query(GENRE_ALL_SQL, (rs, rowNum) -> makeGenre(rs));
         return genres;
     }
 

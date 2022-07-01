@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class GenreFilmStorage {
+    private final String GENRE_INSERT_SQL="insert into GENRE_FILM(GENRE_ID, FILM_ID) values  (?, ?) ";
+    private final String GENRE_DELETE_SQL="delete from GENRE_FILM where  FILM_ID = ?";
     private final JdbcTemplate jdbcTemplate;
 
     public GenreFilmStorage(JdbcTemplate jdbcTemplate) {
@@ -14,13 +16,10 @@ public class GenreFilmStorage {
     }
 
    public  void put(int genreId, int filmId){
-        String sql1Query = "insert into GENRE_FILM(GENRE_ID, FILM_ID)   " +
-                "values  (?, ?) ";
-        jdbcTemplate.update(sql1Query, genreId, filmId);
+        jdbcTemplate.update(GENRE_INSERT_SQL, genreId, filmId);
     }
 
     public void deleteGenresByFilm(int filmId){
-        String sql2Query = "delete from GENRE_FILM where  FILM_ID = ?";
-        jdbcTemplate.update(sql2Query,filmId);
+        jdbcTemplate.update(GENRE_DELETE_SQL,filmId);
     }
 }
