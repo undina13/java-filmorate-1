@@ -1,18 +1,22 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +26,12 @@ import java.util.Optional;
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FilmDbStorage filmDbStorage;
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+    @Autowired
+    public UserDbStorage(JdbcTemplate jdbcTemplate, FilmDbStorage filmDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.filmDbStorage = filmDbStorage;
     }
 
     @Override
@@ -91,12 +98,36 @@ public class UserDbStorage implements UserStorage {
     }
 
 
-
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
         String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + id + ") AND USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + otherId + ")";
         List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
         return users;
+    }
+
+    @Override
+    public List<Film> getRecommendations(int id) {
+        List<Film> films = new ArrayList<>();
+        // Находим айди пользователя с наибольшим пересечением по лайкам
+        String sqlUer = "select user_id, count(film_id) FROM LIKES WHERE film_id IN (\n" +
+                "SELECT film_id FROM LIKEs WHERE user_id = " + id + ") \n" +
+                "AND user_id <> " + id + " GROUP BY USER_id\n" +
+                "ORDER BY count(film_id) DESC LIMIT 1;  ";
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlUer);
+        Integer userNewId = null;
+        if (userRows.next()) {
+            userNewId = userRows.getInt("user_id");
+
+        }
+        if (userNewId != null) {
+            String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = " + userNewId + " AND USER_ID <> " + id;
+            SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet(sql);
+            if (filmIdRows.next()) {
+                int filmId = filmIdRows.getInt("film_id");
+                films.add(filmDbStorage.get(filmId));
+            }
+        }
+        return films;
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
