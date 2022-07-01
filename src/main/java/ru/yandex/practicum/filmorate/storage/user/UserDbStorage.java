@@ -111,7 +111,7 @@ public class UserDbStorage implements UserStorage {
         // Находим айди пользователя с наибольшим пересечением по лайкам
         String sqlUer = "select user_id, count(film_id) FROM LIKES WHERE film_id IN (\n" +
                 "SELECT film_id FROM LIKEs WHERE user_id = " + id + ") \n" +
-                "AND user_id <> " + id + " GROUP BY USER_id\n" +
+                "AND user_id != " + id + " GROUP BY USER_id\n" +
                 "ORDER BY count(film_id) DESC LIMIT 1;  ";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlUer);
         Integer userNewId = null;
@@ -120,7 +120,8 @@ public class UserDbStorage implements UserStorage {
 
         }
         if (userNewId != null) {
-            String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = " + userNewId + " AND USER_ID <> " + id;
+ //           String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = " + userNewId + " AND USER_ID != " + id;
+            String sql = "SELECT * FROM LIKES WHERE FILM_ID in (SELECT FILM_ID FROM LIKEs WHERE USER_ID = " + userNewId + ") AND FILM_ID NOT IN(SELECT FILM_ID FROM LIKEs WHERE USER_ID = " + id +" ) " ;
             SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet(sql);
             if (filmIdRows.next()) {
                 int filmId = filmIdRows.getInt("film_id");

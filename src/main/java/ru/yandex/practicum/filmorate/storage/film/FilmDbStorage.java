@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.storage.GenreFilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -30,7 +31,7 @@ public class FilmDbStorage implements FilmStorage {
     public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreFilmStorage genreFilmStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreFilmStorage = genreFilmStorage;
-    }
+            }
 
     @Override
     public Film create(Film film) {
@@ -68,6 +69,7 @@ public class FilmDbStorage implements FilmStorage {
                 , film.getDuration()
                 , film.getMpa().getId()
                 , film.getId());
+
         if (film.getGenres() != null) {
             genreFilmStorage.deleteGenresByFilm(film.getId());
             TreeSet<Genre> genresSet = new TreeSet<>(Comparator.comparing(Genre::getId));
