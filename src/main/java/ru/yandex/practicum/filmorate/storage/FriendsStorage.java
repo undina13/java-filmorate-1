@@ -15,6 +15,8 @@ import java.time.ZoneOffset;
 @Component
 @Slf4j
 public class FriendsStorage {
+    private final String FRIEND_INSERT_SQL="insert into FRIENDS(USER_ID, FRIEND_ID) values (?, ?)";
+    private final String FRIEND_DELETE_SQL="delete from FRIENDS where USER_ID = ? AND FRIEND_ID = ?";
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
 
@@ -25,9 +27,7 @@ public class FriendsStorage {
     }
 
     public void addFriends(int id, int friendId) {
-        String sql1Query = "insert into FRIENDS(USER_ID, FRIEND_ID)  " +
-                "values (?, ?)";
-        jdbcTemplate.update(sql1Query,
+        jdbcTemplate.update(FRIEND_INSERT_SQL,
                 id,
                 friendId);
 
@@ -40,11 +40,10 @@ public class FriendsStorage {
     }
 
     public void deleteFriends(int id, int friendId) {
-        String sql1Query = "delete from FRIENDS where USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sql1Query,
+
+        jdbcTemplate.update(FRIEND_DELETE_SQL,
                 id,
                 friendId);
-
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                 id,

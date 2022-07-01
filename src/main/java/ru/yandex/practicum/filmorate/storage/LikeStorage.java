@@ -8,13 +8,14 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Component
 @Slf4j
 public class LikeStorage {
+    private final String LIKE_INSERT_SQL = "insert into LIKES(USER_ID, FILM_ID)  values (?, ?)";
+    private final String LIKE_DELETE_SQL = "delete from LIKES where USER_ID = ? and  FILM_ID = ?";
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
 
@@ -25,24 +26,20 @@ public class LikeStorage {
     }
 
     public void putLike(int filmId, int userId) {
-        String sql1Query = "insert into LIKES(USER_ID, FILM_ID)  " +
-                "values (?, ?)";
-        jdbcTemplate.update(sql1Query,
+        jdbcTemplate.update(LIKE_INSERT_SQL,
                 userId,
                 filmId);
 
-       eventStorage.createEvent(new Event(0,
-               LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
-               userId,
-               EventType.LIKE,
-               Operation.ADD,
-               filmId));
+        eventStorage.createEvent(new Event(0,
+                LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
+                userId,
+                EventType.LIKE,
+                Operation.ADD,
+                filmId));
     }
 
-
     public void deleteLike(int filmId, int userId) {
-        String sql1Query = "delete from LIKES where USER_ID = ? and  FILM_ID = ? ";
-        jdbcTemplate.update(sql1Query,
+        jdbcTemplate.update(LIKE_DELETE_SQL,
                 userId,
                 filmId);
 

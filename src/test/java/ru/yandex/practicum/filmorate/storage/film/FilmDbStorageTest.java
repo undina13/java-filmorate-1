@@ -40,6 +40,6 @@ class FilmDbStorageTest {
 
         filmList = filmDbStorage.getBestFilms(10, 5, 22);
 
-        assertEquals(filmList.size(), 1, "Количество обзоров не совпало");
+        assertEquals(filmList.size(), 0, "Количество обзоров не совпало");
     }
 }
