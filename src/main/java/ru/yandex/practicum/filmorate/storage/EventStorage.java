@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
@@ -15,6 +13,9 @@ import java.util.List;
 
 @Component
 public class EventStorage {
+    private final String EVENT_INSERT_SQL = "insert into events" +
+            " (timestamp, user_id, event_type, operation, entity_id) values(?, ?, ?, ?, ?)";
+    private final String EVENT_GET_SQL = "SELECT * From EVENTS WHERE USER_ID =? ";
     private final JdbcTemplate jdbcTemplate;
 
     public EventStorage(JdbcTemplate jdbcTemplate) {
@@ -22,10 +23,8 @@ public class EventStorage {
     }
 
     public void createEvent(Event event) {
-        String sqlQuery = "insert into events (timestamp, user_id, event_type, operation, entity_id) values(?, ?, ?, ?, ?)";
-
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"event_id"});
+            PreparedStatement stmt = connection.prepareStatement(EVENT_INSERT_SQL, new String[]{"event_id"});
             stmt.setLong(1, event.getTimestamp());
             stmt.setInt(2, event.getUserId());
             stmt.setString(3, event.getEventType().toString());
@@ -33,12 +32,10 @@ public class EventStorage {
             stmt.setInt(5, event.getEntityId());
             return stmt;
         });
-
     }
 
     public List<Event> getEventByUserId(int userId) {
-        String sql = "SELECT * From EVENTS WHERE USER_ID = " + userId;
-        List<Event> events = jdbcTemplate.query(sql, (rs, rowNum) -> makeEvent(rs));
+        List<Event> events = jdbcTemplate.query(EVENT_GET_SQL, (rs, rowNum) -> makeEvent(rs), userId);
         return events;
     }
 

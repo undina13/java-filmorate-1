@@ -13,8 +13,8 @@ import java.util.List;
 
 @Service
 public class FilmDbService {
-    FilmStorage filmStorage;
-    LikeStorage likeStorage;
+   private FilmStorage filmStorage;
+   private LikeStorage likeStorage;
 
     @Autowired
     public FilmDbService
@@ -32,8 +32,8 @@ public class FilmDbService {
         return filmStorage.get(id);
     }
 
-    public List<Film> getBestFilms(int count) {
-        return filmStorage.getBestFilms(count);
+    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
+        return filmStorage.getBestFilms(count,genreId,year);
     }
 
     public Film create(Film film) {
