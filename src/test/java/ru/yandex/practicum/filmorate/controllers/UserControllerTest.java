@@ -151,5 +151,16 @@ public class UserControllerTest {
         ;
     }
 
+    @Test
+    void getRecommendation()throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/recommendations"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json(" [{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"mpa\":{\"id\":4,\"name\":\"R\"}}]"));
+
+    }
+
 
 }
