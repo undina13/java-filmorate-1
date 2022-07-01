@@ -71,11 +71,11 @@ public class FilmController {
         filmDbService.deleteLike(id, userId);
     }
 
-    @GetMapping("/director/{directorId}")
+    /*@GetMapping("/director/{directorId}")
     public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
                                                          @RequestParam String sortBy) {
         return directorService.getAllFilmsOfDirectorSortedByLikes(directorId, sortBy);
-    }
+    }*/
 
 
 }
