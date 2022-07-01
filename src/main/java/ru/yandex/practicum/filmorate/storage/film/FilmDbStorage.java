@@ -184,4 +184,20 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql1Query,
                 id);
     }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sqlQuery = "SELECT film_id " +
+                "FROM LIKES " +
+                "WHERE user_id = ? " +
+                "INTERSECT " +
+                "SELECT film_id " +
+                "FROM LIKES " +
+                "WHERE user_id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, userId, friendId);
+        List<Film> commonFilms = new ArrayList<>();
+        while (rowSet.next()) {
+            commonFilms.add(get(rowSet.getInt("film_id")));
+        }
+        return commonFilms;
+    }
 }
