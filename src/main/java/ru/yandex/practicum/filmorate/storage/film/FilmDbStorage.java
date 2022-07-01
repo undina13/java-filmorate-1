@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
@@ -52,6 +53,9 @@ public class FilmDbStorage implements FilmStorage {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
+        //if (film.getDirectors() != null) {
+            addDirectorToFilm(filmId, film.getDirectors());
+       // }
         return film;
     }
 
@@ -74,31 +78,42 @@ public class FilmDbStorage implements FilmStorage {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
+        if (film.getDirectors() != null) {
+            removeDirectorFromFilm(film.getId());
+            addDirectorToFilm(film.getId(), film.getDirectors());
+        }
+        if (film.getDirectors() == null || film.getDirectors().isEmpty()) {
+            film.setDirectors(null);
+        }
         if (test != 1) {
             throw new FilmNotFoundException("film not found");
         }
+
         return film;
     }
 
     @Override
     public Collection<Film> getAll() {
         return jdbcTemplate.queryForStream("""
-                        select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id ;
-                        """,
-                (rs, rowNum) ->
-                        new Film(
-                                rs.getInt("film_id"),
-                                rs.getString("name"),
-                                rs.getString("description"),
-                                rs.getDate("release_Date").toLocalDate(),
-                                rs.getInt("duration"),
-                                new MPAA(rs.getInt("mpaa_id"),
-                                        rs.getString(8))
-                        )
-        )
+                                select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id ;
+                                """,
+                        (rs, rowNum) ->
+                                new Film(
+                                        rs.getInt("film_id"),
+                                        rs.getString("name"),
+                                        rs.getString("description"),
+                                        rs.getDate("release_Date").toLocalDate(),
+                                        rs.getInt("duration"),
+                                        new MPAA(rs.getInt("mpaa_id"),
+                                                rs.getString(8))
+                                )
+                )
                 .map(this::setGenre)
                 .map(this::setLikes)
+                .map(this::setDirector)
                 .collect(Collectors.toList());
+
+        // добавить режиссера
     }
 
     @Override
@@ -117,9 +132,12 @@ public class FilmDbStorage implements FilmStorage {
             );
             setGenre(film);
             setLikes(film);
+            setDirector(film);
+            // добавить режиссера
             return film;
         }
         throw new FilmNotFoundException("Фильмы не найдены");
+        // добавить режиссера
     }
 
     public List<Film> getBestFilms(int count) {
@@ -145,12 +163,16 @@ public class FilmDbStorage implements FilmStorage {
                         rs.getString(8)));
         setGenre(film);
         setLikes(film);
+        setDirector(film);
         return film;
     }
 
     private Film setGenre(Film film) {
-        String sql = "select G.GENRE_ID, G.NAME from GENRE AS G  join GENRE_FILM GF on G.GENRE_ID = GF.GENRE_ID  where  GF.FILM_ID = " + film
-                .getId() + " ORDER BY G.GENRE_ID ";
+        String sql = "select G.GENRE_ID, G.NAME " +
+                "from GENRE AS G  " +
+                "join GENRE_FILM GF on G.GENRE_ID = GF.GENRE_ID  " +
+                "where  GF.FILM_ID = " + film.getId() +
+                " ORDER BY G.GENRE_ID ";
         List<Genre> genres = jdbcTemplate.query(sql, (gs, rowNum) -> makeGenre(gs));
         if (genres.isEmpty()) {
             return film;
@@ -181,4 +203,53 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql1Query,
                 id);
     }
+
+    private Film setDirector(Film film) {
+        log.info("FilmDbStorage => setDirector вошли в метод");
+        String sql = "select d.director_id, d.name " +
+                "from DIRECTORS AS d  " +
+                "join director_film AS df on d.director_id = df.director_id  " +
+                "where  df.film_id = " + film.getId() +
+                " ORDER BY d.director_id ";
+        List<Director> directors = jdbcTemplate.query(sql, (gs, rowNum) -> makeDirector(gs));
+        log.info("FilmDbStorage => setDirector  List<Director> directors " + directors);
+        if (directors.isEmpty()) {
+            return film;
+        }
+        film.setDirectors(new TreeSet<>(directors));
+        log.info("FilmDbStorage => setDirector  film " + film);
+        return film;
+    }
+
+    private Director makeDirector(ResultSet gs) throws SQLException {
+        log.info("FilmDbStorage => makeDirector  вошли в метод");
+        return new Director(
+                gs.getInt("director_id"),
+                gs.getString("name")
+        );
+    }
+
+    public void addDirectorToFilm(int filmId, TreeSet<Director> directors) {
+        log.info("FilmDbStorage => addDirectorToFilm вошли в метод, filmId = {}, directors = {}",filmId,directors);
+        String DIRECTOR_INSERT_TO_FILM = "INSERT INTO DIRECTOR_FILM (DIRECTOR_ID, FILM_ID) VALUES ( ?,? )";
+        //String DIRECTOR_INSERT_TO_FILM = "insert into director_film (director_id, film_id) values ( ?, ? )";
+
+       /* var var = directors.stream()
+                .map(d -> jdbcTemplate.update(DIRECTOR_INSERT_TO_FILM, d.getId(),filmId));*/
+        for (Director director : directors) {
+            jdbcTemplate.update(DIRECTOR_INSERT_TO_FILM, director.getId(),filmId);
+            log.info("FilmDbStorage => addDirectorToFilm director" + director);
+        }
+    }
+
+    public void removeDirectorFromFilm(int filmId) {
+        log.info("FilmDbStorage => removeDirectorFromFilm remove filmId " + filmId);
+        String DIRECTOR_DELETE_FROM_FILM = "DELETE FROM director_film WHERE film_id=?";
+        jdbcTemplate.update(DIRECTOR_DELETE_FROM_FILM, filmId);
+    }
+
+
+
+
+
 }
