@@ -32,6 +32,7 @@ public class UserDbStorage implements UserStorage {
             " (SELECT FRIEND_ID FROM FRIENDS where USER_ID = ?)";
     private final String USER_SET_FRIENDS_SQL = "SELECT USER_ID From USERS where USER_ID IN " +
             "(SELECT FRIEND_ID FROM FRIENDS where USER_ID =?)";
+    private final String USER_DELETE_SQL = "delete from USERS where USER_ID = ? ";
     private final JdbcTemplate jdbcTemplate;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
@@ -93,6 +94,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int id) {
+        get(id);
         List<User> users = jdbcTemplate.query(USER_GET_FRIENDS_SQL, (rs, rowNum) -> makeUser(rs), id);
         return users;
     }
@@ -124,5 +126,11 @@ public class UserDbStorage implements UserStorage {
             user.setFriends(new HashSet<>(users));
         }
         return user;
+    }
+    @Override
+    public void deleteUser(int id) {
+        get(id); //check user
+        jdbcTemplate.update(USER_DELETE_SQL,
+                id);
     }
 }

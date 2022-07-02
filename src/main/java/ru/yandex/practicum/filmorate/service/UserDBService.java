@@ -75,4 +75,8 @@ public class UserDBService {
     public List<Event> getEventByUserId(int id) {
       return  eventStorage.getEventByUserId(id);
     }
+
+    public void deleteUser(int id){
+        userStorage.deleteUser(id);
+    }
 }
