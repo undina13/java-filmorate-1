@@ -6,12 +6,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MPAA;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,19 +24,14 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public Director addDirector(Director director) {
-        log.info("DirectorDbStorage=>addDirector " + director);
         String INSERT_DIRECTOR = "insert into public.directors (name) values (?)";
-        log.info("DirectorDbStorage=>addDirector " + INSERT_DIRECTOR);
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        log.info("DirectorDbStorage=>addDirector keyHolder" + keyHolder);
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(INSERT_DIRECTOR, new String[]{"director_id"});
             stmt.setString(1, director.getName());
             return stmt;
         }, keyHolder);
-        log.info("DirectorDbStorage=>addDirector после jdbcTemplate.update");
         director.setId(keyHolder.getKey().intValue());
-        log.info("DirectorDbStorage=>addDirector " + director);
         return director;
     }
 
@@ -89,10 +80,8 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public boolean removeDirector(int id) {
-        log.info("FilmDbStorage => removeDirector removeDirector " + id);
-        String DIRECTOR_DELETE="DELETE FROM DIRECTORS WHERE DIRECTOR_ID=?";
-        //String DIRECTOR_DELETE="delete from directors where director_id=?";
-        return jdbcTemplate.update(DIRECTOR_DELETE,id)>0;
+        String DIRECTOR_DELETE = "DELETE FROM DIRECTORS WHERE DIRECTOR_ID=?";
+        return jdbcTemplate.update(DIRECTOR_DELETE, id) > 0;
     }
 
 

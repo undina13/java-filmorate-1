@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.storage.GenreFilmStorage;
 import ru.yandex.practicum.filmorate.storage.MPAADbStorage;
+import ru.yandex.practicum.filmorate.storage.director.DirectorFilmStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -28,12 +29,17 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreFilmStorage genreFilmStorage;
     private final MPAADbStorage mpaaDbStorage;
+    private final DirectorFilmStorage directorFilmStorage;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreFilmStorage genreFilmStorage, MPAADbStorage mpaaDbStorage) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate,
+                         GenreFilmStorage genreFilmStorage,
+                         MPAADbStorage mpaaDbStorage,
+                         DirectorFilmStorage directorFilmStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreFilmStorage = genreFilmStorage;
         this.mpaaDbStorage = mpaaDbStorage;
+        this.directorFilmStorage = directorFilmStorage;
     }
 
     @Override
@@ -56,7 +62,8 @@ public class FilmDbStorage implements FilmStorage {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
-        addDirectorToFilm(filmId, film.getDirectors());
+        // addDirectorToFilm(filmId, film.getDirectors());
+        directorFilmStorage.addDirectorToFilm(filmId, film.getDirectors());
         return film;
     }
 
@@ -80,10 +87,10 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
         if (film.getDirectors() != null) {
-            removeDirectorFromFilm(film.getId());
-            addDirectorToFilm(film.getId(), film.getDirectors());
+            directorFilmStorage.removeDirectorFromFilm(film.getId());
+            directorFilmStorage.addDirectorToFilm(film.getId(), film.getDirectors());
         }
-        if (film.getDirectors() == null || film.getDirectors().isEmpty()) {   // заглушка для тестов постман
+        if (film.getDirectors() == null || film.getDirectors().isEmpty()) {
             film.setDirectors(null);
         }
         if (test != 1) {
@@ -222,21 +229,8 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-    public void addDirectorToFilm(int filmId, TreeSet<Director> directors) {
-        String DIRECTOR_INSERT_TO_FILM = "INSERT INTO DIRECTOR_FILM (DIRECTOR_ID, FILM_ID) VALUES ( ?,? )";
-        for (Director director : directors) {
-            jdbcTemplate.update(DIRECTOR_INSERT_TO_FILM, director.getId(), filmId);
-        }
-    }
-
-    public void removeDirectorFromFilm(int filmId) {
-        String DIRECTOR_DELETE_FROM_FILM = "DELETE FROM director_film WHERE film_id=?";
-        jdbcTemplate.update(DIRECTOR_DELETE_FROM_FILM, filmId);
-    }
-
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByLikes(int id) {
-        log.info("FilmDbStorage => getAllFilmsOfDirectorSortedByLikes вошли в метод");
         String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_LIKES = """
                         SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID
                          FROM FILM
