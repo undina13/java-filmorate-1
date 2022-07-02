@@ -129,7 +129,7 @@ public class UserDbStorage implements UserStorage {
     }
     @Override
     public void deleteUser(int id) {
-        get(id); //check user
+        get(id);
         jdbcTemplate.update(USER_DELETE_SQL,
                 id);
     }
