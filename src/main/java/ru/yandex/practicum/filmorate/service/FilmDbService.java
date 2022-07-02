@@ -58,7 +58,9 @@ public class FilmDbService {
         likeStorage.deleteLike(filmId, userId);
     }
 
-
+    public List<Film> getAllFilmsOfDirectorSortedByLikes() {
+        return null;
+    }
 
     public Collection<Film> search(String query, List<String> by) {
         return filmStorage.search(query, by);

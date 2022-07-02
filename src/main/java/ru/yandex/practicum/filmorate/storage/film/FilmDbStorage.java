@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPAA;
@@ -52,6 +53,9 @@ public class FilmDbStorage implements FilmStorage {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
+        //if (film.getDirectors() != null) {
+            addDirectorToFilm(filmId, film.getDirectors());
+       // }
         return film;
     }
 
@@ -73,6 +77,13 @@ public class FilmDbStorage implements FilmStorage {
             for (Genre genre : genresSet) {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
+        }
+        if (film.getDirectors() != null) {
+            removeDirectorFromFilm(film.getId());
+            addDirectorToFilm(film.getId(), film.getDirectors());
+        }
+        if (film.getDirectors() == null || film.getDirectors().isEmpty()) {
+            film.setDirectors(null);
         }
         if (test != 1) {
             throw new FilmNotFoundException("film not found");
@@ -98,6 +109,7 @@ public class FilmDbStorage implements FilmStorage {
         )
                 .map(this::setGenre)
                 .map(this::setLikes)
+                .map(this::setDirector)
                 .collect(Collectors.toList());
     }
 
@@ -117,6 +129,8 @@ public class FilmDbStorage implements FilmStorage {
             );
             setGenre(film);
             setLikes(film);
+            setDirector(film);
+            // добавить режиссера
             return film;
         }
         throw new FilmNotFoundException("Фильмы не найдены");
@@ -136,16 +150,19 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> search(String query, List<String> by) {
-        String sql = "";
+
+        String sqlTitle =    "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like  '%" + query.toLowerCase() + "%' ";
+        String sqlDirector =  "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like '%" + query.toLowerCase() + "%' ";
+        List<Film> films = new ArrayList<>();
         if(by.containsAll(List.of("director", "title"))) {
-         //    sql =  "SELECT  * FROM FILM WHERE NAME  like (%" + query + "%)";
+            films = jdbcTemplate.query(sqlDirector, (rs, rowNum) -> get(rs.getInt("film_id")));
+            films.addAll(jdbcTemplate.query(sqlTitle, (rs, rowNum) -> get(rs.getInt("film_id"))));
         }
-        else if(by.containsAll(List.of( "title"))){
-          sql =  "SELECT  * FROM FILM WHERE NAME  like (%" + query + "%)";
+        else if(by.contains("title")){
+             films = jdbcTemplate.query(sqlTitle, (rs, rowNum) -> get(rs.getInt("film_id")));
         }
-        List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
-        if (films.isEmpty()) {
-            films = new ArrayList<>(getAll());
+        else if(by.contains("director")){
+             films = jdbcTemplate.query(sqlDirector, (rs, rowNum) -> get(rs.getInt("film_id")));
         }
 
         return films;
@@ -162,6 +179,7 @@ public class FilmDbStorage implements FilmStorage {
                         rs.getString(8)));
         setGenre(film);
         setLikes(film);
+        setDirector(film);
         return film;
     }
 
@@ -198,4 +216,53 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql1Query,
                 id);
     }
+
+    private Film setDirector(Film film) {
+        log.info("FilmDbStorage => setDirector вошли в метод");
+        String sql = "select d.director_id, d.name " +
+                "from DIRECTORS AS d  " +
+                "join director_film AS df on d.director_id = df.director_id  " +
+                "where  df.film_id = " + film.getId() +
+                " ORDER BY d.director_id ";
+        List<Director> directors = jdbcTemplate.query(sql, (gs, rowNum) -> makeDirector(gs));
+        log.info("FilmDbStorage => setDirector  List<Director> directors " + directors);
+        if (directors.isEmpty()) {
+            return film;
+        }
+        film.setDirectors(new TreeSet<>(directors));
+        log.info("FilmDbStorage => setDirector  film " + film);
+        return film;
+    }
+
+    private Director makeDirector(ResultSet gs) throws SQLException {
+        log.info("FilmDbStorage => makeDirector  вошли в метод");
+        return new Director(
+                gs.getInt("director_id"),
+                gs.getString("name")
+        );
+    }
+
+    public void addDirectorToFilm(int filmId, TreeSet<Director> directors) {
+        log.info("FilmDbStorage => addDirectorToFilm вошли в метод, filmId = {}, directors = {}",filmId,directors);
+        String DIRECTOR_INSERT_TO_FILM = "INSERT INTO DIRECTOR_FILM (DIRECTOR_ID, FILM_ID) VALUES ( ?,? )";
+        //String DIRECTOR_INSERT_TO_FILM = "insert into director_film (director_id, film_id) values ( ?, ? )";
+
+       /* var var = directors.stream()
+                .map(d -> jdbcTemplate.update(DIRECTOR_INSERT_TO_FILM, d.getId(),filmId));*/
+        for (Director director : directors) {
+            jdbcTemplate.update(DIRECTOR_INSERT_TO_FILM, director.getId(),filmId);
+            log.info("FilmDbStorage => addDirectorToFilm director" + director);
+        }
+    }
+
+    public void removeDirectorFromFilm(int filmId) {
+        log.info("FilmDbStorage => removeDirectorFromFilm remove filmId " + filmId);
+        String DIRECTOR_DELETE_FROM_FILM = "DELETE FROM director_film WHERE film_id=?";
+        jdbcTemplate.update(DIRECTOR_DELETE_FROM_FILM, filmId);
+    }
+
+
+
+
+
 }

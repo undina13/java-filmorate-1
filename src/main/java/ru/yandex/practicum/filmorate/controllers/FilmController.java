@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,10 +22,12 @@ public class FilmController {
 
    FilmDbService filmDbService;
     FilmValidator filmValidator;
+    DirectorService directorService;
 
     @Autowired
-    public FilmController(FilmDbService filmDbService) {
+    public FilmController(FilmDbService filmDbService, DirectorService directorService) {
         this.filmDbService = filmDbService;
+        this.directorService = directorService;
     }
 
     @GetMapping
