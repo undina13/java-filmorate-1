@@ -201,6 +201,7 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
+    @Override
     public void deleteFilm(int id) {
         jdbcTemplate.update(FILM_DELETE_SQL,
                 id);
