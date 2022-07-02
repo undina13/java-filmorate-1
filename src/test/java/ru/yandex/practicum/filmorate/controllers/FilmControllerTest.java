@@ -128,21 +128,12 @@ class FilmControllerTest {
     void deleteFilm() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/films")
-                        .content("{\"name\":\"New film\",\"releaseDate\":\"1999-04-30\",\"description\":\"New film to delete\",\"duration\":20,\"mpa\":{\"id\":1},\"genres\":[{\"id\":1},{\"id\":2},{\"id\":3}]}")
-                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-        ;
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/films")
                         .content("{\"name\":\"New film 2\",\"releaseDate\":\"1999-04-30\",\"description 2\":\"New film to delete 2\",\"duration\":20,\"mpa\":{\"id\":1},\"genres\":[{\"id\":1},{\"id\":2},{\"id\":3}]}")
-                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-        ;
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/{id}/like/{userId}")).andExpect(status().isOk())
-        ;
-        filmController.deleteFilm(2);
+                MockMvcRequestBuilders.delete("/films/5")).andExpect(status().isOk());
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/films/2")).andExpect(status().isNotFound())
-        ;
+                MockMvcRequestBuilders.get("/films/5")).andExpect(status().isNotFound()) ;
     }
 
     @Test

@@ -152,11 +152,12 @@ public class UserControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void deleteUser() throws Exception{
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/users")
-                    .content("{\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
-                    .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                MockMvcRequestBuilders.post("/users")
+                        .content("{\"email\":\"dfg@mail.ru\",\"login\":\"login\",\"name\":\"name\",\"birthday\":\"1980-05-13\"}")
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
         ;
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/users/1")).andExpect(status().isOk())
