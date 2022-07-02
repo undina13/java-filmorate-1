@@ -95,7 +95,5 @@ public class DirectorDbStorage implements DirectorStorage {
         return jdbcTemplate.update(DIRECTOR_DELETE,id)>0;
     }
 
-    public List<Film> getAllFilmsOfDirectorSortedByLikes() {
-        return null;
-    }
+
 }
