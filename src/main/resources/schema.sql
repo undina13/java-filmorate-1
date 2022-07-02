@@ -1,5 +1,4 @@
-
-
+drop table if exists FILM, USERS, GENRE_FILM, LIKES, FRIENDS, MPAA, director_film, directors,REVIEWS, EVENTS ;
 
 CREATE TABLE IF NOT EXISTS PUBLIC.MPAA
 (

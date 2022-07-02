@@ -251,15 +251,14 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByLikes(int id) {
-        String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_LIKES = """
-                        SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID
-                         FROM FILM
-                         LEFT JOIN LIKES L on FILM.FILM_ID = L.FILM_ID
-                         LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID
-                         WHERE DF.DIRECTOR_ID=?
-                         GROUP BY FILM.FILM_ID
-                         ORDER BY COUNT(L.FILM_ID) DESC
-                """;
+        String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_LIKES =
+                "SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID " +
+                        "FROM FILM " +
+                        "LEFT JOIN LIKES L on FILM.FILM_ID = L.FILM_ID " +
+                        "LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID " +
+                        "WHERE DF.DIRECTOR_ID=? " +
+                        "GROUP BY FILM.FILM_ID " +
+                        "ORDER BY COUNT(L.FILM_ID) DESC;";
 
         List<Film> films = new ArrayList<>();
         SqlRowSet filmsRows = jdbcTemplate.queryForRowSet(FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_LIKES, id);
@@ -282,13 +281,12 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByYears(int id) {
-        String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_YEARS = """
-                SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID
-                FROM FILM
-                LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID
-                WHERE DF.DIRECTOR_ID =?
-                ORDER BY FILM.RELEASE_DATE
-                 """;
+        String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_YEARS =
+                "SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID " +
+                "FROM FILM " +
+                "LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID " +
+                "WHERE DF.DIRECTOR_ID =? " +
+                "ORDER BY FILM.RELEASE_DATE;";
 
         List<Film> films = new ArrayList<>();
         SqlRowSet filmsRows = jdbcTemplate.queryForRowSet(FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_YEARS, id);
@@ -308,7 +306,6 @@ public class FilmDbStorage implements FilmStorage {
         }
         return films;
     }
-
 
 
     public List<Film> getCommonFilms(int userId, int friendId) {
