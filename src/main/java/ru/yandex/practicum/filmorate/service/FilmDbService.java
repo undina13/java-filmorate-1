@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
-import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.Collection;
@@ -22,7 +21,7 @@ public class FilmDbService {
     @Autowired
     public FilmDbService
             (@Qualifier("filmDbStorage") FilmStorage filmStorage,
-             LikeStorage likeStorage, DirectorService directorService) {
+             LikeStorage likeStorage) {
         this.filmStorage = filmStorage;
         this.likeStorage = likeStorage;
         this.directorService = directorService;
@@ -36,8 +35,8 @@ public class FilmDbService {
         return filmStorage.get(id);
     }
 
-    public List<Film> getBestFilms(int count) {
-        return filmStorage.getBestFilms(count);
+    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
+        return filmStorage.getBestFilms(count,genreId,year);
     }
 
     public Film create(Film film) {
@@ -68,5 +67,9 @@ public class FilmDbService {
             return filmStorage.getAllFilmsOfDirectorSortedByLikes(id);
         }
         return filmStorage.getAllFilmsOfDirectorSortedByYears(id);
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }

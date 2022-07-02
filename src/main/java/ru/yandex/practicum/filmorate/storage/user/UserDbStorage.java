@@ -20,7 +20,18 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class UserDbStorage implements UserStorage {
-
+    private final String USER_INSERT_SQL = "insert into users (email, login, name, birthday) values(?, ?, ?, ?)";
+    private final String USER_UPDATE_SQL = "update users set email = ?, login = ?, name = ?, birthday = ?   " +
+            "where user_id = ?";
+    private final String USER_ALL_SQL = "SELECT * From USERS ";
+    private final String USER_GET_SQL = "select * from users where USER_ID = ?";
+    private final String USER_GET_FRIENDS_SQL = "SELECT * From USERS where USER_ID IN " +
+            "(SELECT FRIEND_ID FROM FRIENDS where USER_ID = ?)";
+    private final String USER_COMMON_SQL = "SELECT * From USERS where USER_ID IN " +
+            "(SELECT FRIEND_ID FROM FRIENDS where USER_ID =?) AND USER_ID IN" +
+            " (SELECT FRIEND_ID FROM FRIENDS where USER_ID = ?)";
+    private final String USER_SET_FRIENDS_SQL = "SELECT USER_ID From USERS where USER_ID IN " +
+            "(SELECT FRIEND_ID FROM FRIENDS where USER_ID =?)";
     private final JdbcTemplate jdbcTemplate;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
@@ -29,10 +40,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        String sqlQuery = "insert into users (email, login, name, birthday) values(?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"user_id"});
+            PreparedStatement stmt = connection.prepareStatement(USER_INSERT_SQL, new String[]{"user_id"});
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
             stmt.setString(3, user.getName());
@@ -45,8 +55,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User put(User user) {
-        String sqlQuery = "update users set email = ?, login = ?, name = ?, birthday = ?   where user_id = ?";
-        jdbcTemplate.update(sqlQuery
+        jdbcTemplate.update(USER_UPDATE_SQL
                 , user.getEmail()
                 , user.getLogin()
                 , user.getName()
@@ -58,14 +67,13 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAll() {
-        String sql = "SELECT * From USERS ";
-        List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
+        List<User> users = jdbcTemplate.query(USER_ALL_SQL, (rs, rowNum) -> makeUser(rs));
         return users;
     }
 
     @Override
     public Optional<User> get(int id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where USER_ID = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(USER_GET_SQL, id);
         if (userRows.next()) {
             User user = new User(
                     userRows.getInt("user_id"),
@@ -85,8 +93,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int id) {
-        String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + id + ");";
-        List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
+        List<User> users = jdbcTemplate.query(USER_GET_FRIENDS_SQL, (rs, rowNum) -> makeUser(rs), id);
         return users;
     }
 
@@ -94,8 +101,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
-        String sql = "SELECT * From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + id + ") AND USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + otherId + ")";
-        List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
+        List<User> users = jdbcTemplate.query(USER_COMMON_SQL, (rs, rowNum) -> makeUser(rs), id, otherId);
         return users;
     }
 
@@ -112,9 +118,8 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User setFriends(User user) {
-        String sql = "SELECT USER_ID From USERS where USER_ID IN (SELECT FRIEND_ID FROM FRIENDS where USER_ID = " + user
-                .getId() + ");";
-        List<Integer> users = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user_id"));
+        List<Integer> users = jdbcTemplate.query(USER_SET_FRIENDS_SQL, (rs, rowNum) -> rs.getInt("user_id"),
+                user.getId());
         if (!users.isEmpty()) {
             user.setFriends(new HashSet<>(users));
         }

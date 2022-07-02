@@ -10,7 +10,7 @@ import java.util.Collection;
 
 @Service
 public class MpaaService {
-    MPAADbStorage mpaaDbStorage;
+    private MPAADbStorage mpaaDbStorage;
 
     @Autowired
     public MpaaService(MPAADbStorage mpaaDbStorage) {

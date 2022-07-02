@@ -19,7 +19,7 @@ import java.util.Collection;
 @Slf4j
 @Getter
 public class GenreController {
-    GenreService genreService;
+    private GenreService genreService;
 
     @Autowired
     public GenreController(GenreService genreService) {
