@@ -20,9 +20,9 @@ import java.util.List;
 @Getter
 public class FilmController {
 
-    FilmDbService filmDbService;
-    FilmValidator filmValidator;
-    DirectorService directorService;
+ private FilmDbService filmDbService;
+   private FilmValidator filmValidator;
+   private DirectorService directorService;
 
     @Autowired
     public FilmController(FilmDbService filmDbService, DirectorService directorService) {
@@ -78,6 +78,11 @@ public class FilmController {
         return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId,sortBy);
     }
 
+
+    @GetMapping("/search")
+    public Collection<Film> search(@RequestParam String query, @RequestParam List<String> by) {
+        return filmDbService.search(query, by);
+    }
 
     @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {

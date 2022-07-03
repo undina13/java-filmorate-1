@@ -74,6 +74,14 @@ public class FilmDbService {
         return filmStorage.getCommonFilms(userId, friendId);
     }
 
+    public List<Film> getAllFilmsOfDirectorSortedByLikes() {
+        return null;
+    }
+
+    public Collection<Film> search(String query, List<String> by) {
+        return filmStorage.search(query, by);
+    }
+
     public void deleteFilm(int id){
         filmStorage.deleteFilm(id);
     }

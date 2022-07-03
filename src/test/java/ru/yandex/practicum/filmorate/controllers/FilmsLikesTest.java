@@ -56,5 +56,4 @@ public class FilmsLikesTest {
         Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(2, 3));
     }
 
-
 }
