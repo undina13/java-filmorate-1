@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,11 +20,12 @@ import java.util.List;
 @Getter
 public class FilmController {
 
-    private FilmDbService filmDbService;
-    private FilmValidator filmValidator;
+    FilmDbService filmDbService;
+    FilmValidator filmValidator;
+    DirectorService directorService;
 
     @Autowired
-    public FilmController(FilmDbService filmDbService) {
+    public FilmController(FilmDbService filmDbService, DirectorService directorService) {
         this.filmDbService = filmDbService;
     }
 
@@ -68,6 +71,13 @@ public class FilmController {
     public void deleteLike(@PathVariable int id, @PathVariable int userId){
         filmDbService.deleteLike(id, userId);
     }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
+                                                         @RequestParam String sortBy) {
+        return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId,sortBy);
+    }
+
 
     @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
