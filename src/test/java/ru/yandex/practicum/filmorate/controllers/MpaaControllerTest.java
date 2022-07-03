@@ -32,7 +32,8 @@ public class MpaaControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("[{\"id\":1,\"name\":\"G\"},{\"id\":2,\"name\":\"PG\"},{\"id\":3,\"name\":\"PG-13\"},{\"id\":4,\"name\":\"R\"},{\"id\":5,\"name\":\"NC-17\"}]"));
+                        .json("[{\"id\":1,\"name\":\"G\"},{\"id\":2,\"name\":\"PG\"},{\"id\":3,\"name\":" +
+                                "\"PG-13\"},{\"id\":4,\"name\":\"R\"},{\"id\":5,\"name\":\"NC-17\"}]"));
     }
 
     @Test

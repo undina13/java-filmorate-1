@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 public class Film {
@@ -24,6 +25,7 @@ public class Film {
     private Set<Integer> likes;
 
     private Set<Genre> genres;
+    private TreeSet<Director> directors = new TreeSet<>();
 
     private MPAA mpa;
 
@@ -34,5 +36,9 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.mpa = mpa;
+    }
+
+    public void setDirectors(TreeSet<Director> directors) {
+        this.directors = directors;
     }
 }

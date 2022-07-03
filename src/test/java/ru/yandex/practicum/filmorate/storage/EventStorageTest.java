@@ -35,8 +35,8 @@ public class EventStorageTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("[{\"eventId\":1,\"timestamp\":123344556,\"userId\":1,\"eventType\":\"LIKE\",\"operation\":\"ADD\",\"entityId\":1},{\"eventId\":2,\"timestamp\":123344558,\"userId\":1,\"eventType\":\"REVIEW\",\"operation\":\"ADD\",\"entityId\":1}]"));
+                        .json("[{\"eventId\":1,\"timestamp\":123344556,\"userId\":1,\"eventType\":\"LIKE\"," +
+                                "\"operation\":\"ADD\",\"entityId\":1},{\"eventId\":2,\"timestamp\":123344558," +
+                                "\"userId\":1,\"eventType\":\"REVIEW\",\"operation\":\"ADD\",\"entityId\":1}]"));
     }
-
-
 }

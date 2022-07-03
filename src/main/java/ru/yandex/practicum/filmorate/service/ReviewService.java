@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewService {
     private ReviewStorage reviewStorage;
+
     @Autowired
     public ReviewService(ReviewStorage reviewStorage) {
         this.reviewStorage = reviewStorage;

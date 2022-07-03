@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import java.util.List;
 @Slf4j
 @Getter
 public class FilmController {
-
     private FilmDbService filmDbService;
     private FilmValidator filmValidator;
 
@@ -69,5 +69,25 @@ public class FilmController {
         filmDbService.deleteLike(id, userId);
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
+                                                         @RequestParam String sortBy) {
+        return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId, sortBy);
+    }
 
+
+    @GetMapping("/search")
+    public Collection<Film> search(@RequestParam String query, @RequestParam List<String> by) {
+        return filmDbService.search(query, by);
+    }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return filmDbService.getCommonFilms(userId, friendId);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable int id) {
+        filmDbService.deleteFilm(id);
+    }
 }

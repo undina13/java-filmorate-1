@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.EventStorage;
 import ru.yandex.practicum.filmorate.storage.FriendsStorage;
@@ -47,7 +47,7 @@ public class UserDBService {
         if (id < 1 || friendId < 1) {
             throw new UserNotFoundException("user not found");
         }
-       friendsStorage.addFriends(id, friendId);
+        friendsStorage.addFriends(id, friendId);
     }
 
     public void deleteFriends(int id, int friendId) {
@@ -73,6 +73,14 @@ public class UserDBService {
     }
 
     public List<Event> getEventByUserId(int id) {
-      return  eventStorage.getEventByUserId(id);
+        return eventStorage.getEventByUserId(id);
+    }
+
+    public void deleteUser(int id) {
+        userStorage.deleteUser(id);
+    }
+
+    public List<Film> getRecommendations(int id) {
+        return userStorage.getRecommendations(id);
     }
 }
