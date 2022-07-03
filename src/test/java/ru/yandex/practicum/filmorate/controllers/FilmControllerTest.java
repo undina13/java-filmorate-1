@@ -131,7 +131,7 @@ class FilmControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("[{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"}}]"));
+                        .json("[{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"}}, {\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\",\"releaseDate\":\"2020-08-16\",\"duration\":120,\"likes\":[1,2],\"genres\":[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"directors\":[],\"mpa\":{\"id\":5,\"name\":\"NC-17\"}}]"));
 
     }
 
