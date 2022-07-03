@@ -20,6 +20,8 @@ public interface UserStorage {
 
     List<User> getCommonFriends(int id, int otherId);
 
+    void deleteUser(int id);
+
     List<Film> getRecommendations(int id);
 }
 

@@ -18,9 +18,9 @@ import java.util.Optional;
 @Service
 public class UserDBService {
 
-    UserStorage userStorage;
-    FriendsStorage friendsStorage;
-    EventStorage eventStorage;
+    private UserStorage userStorage;
+    private FriendsStorage friendsStorage;
+    private EventStorage eventStorage;
 
     @Autowired
     public UserDBService(UserStorage userStorage, FriendsStorage friendsStorage, EventStorage eventStorage) {
@@ -75,6 +75,10 @@ public class UserDBService {
 
     public List<Event> getEventByUserId(int id) {
       return  eventStorage.getEventByUserId(id);
+    }
+
+    public void deleteUser(int id){
+        userStorage.deleteUser(id);
     }
 
     public List<Film> getRecommendations(int id) {

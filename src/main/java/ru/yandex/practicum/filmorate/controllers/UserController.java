@@ -21,8 +21,8 @@ import java.util.Optional;
 @Getter
 public class UserController {
 
-    UserDBService userService;
-    UserValidatior userValidatior;
+    private UserDBService userService;
+    private UserValidatior userValidatior;
 
     @Autowired
     public UserController(UserDBService userService) {
@@ -78,6 +78,10 @@ public class UserController {
         userService.deleteFriends(id, friendId);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable int id){
+        userService.deleteUser(id);
+    }
     @GetMapping("/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable int id) {
         return userService.getRecommendations(id);

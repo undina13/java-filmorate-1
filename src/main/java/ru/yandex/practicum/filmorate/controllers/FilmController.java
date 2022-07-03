@@ -18,8 +18,8 @@ import java.util.List;
 @Getter
 public class FilmController {
 
-   FilmDbService filmDbService;
-    FilmValidator filmValidator;
+    private FilmDbService filmDbService;
+    private FilmValidator filmValidator;
 
     @Autowired
     public FilmController(FilmDbService filmDbService) {
@@ -37,8 +37,10 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count){
-        return filmDbService.getBestFilms(count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count,
+                                 @RequestParam(required = false) Integer genreId,
+                                 @RequestParam(required = false) Integer year) {
+        return filmDbService.getBestFilms(count, genreId, year);
     }
 
     @PostMapping
@@ -67,5 +69,13 @@ public class FilmController {
         filmDbService.deleteLike(id, userId);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return filmDbService.getCommonFilms(userId, friendId);
+    }
 
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable int id){
+        filmDbService.deleteFilm(id);
+    }
 }
