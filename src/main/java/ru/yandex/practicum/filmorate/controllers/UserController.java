@@ -22,7 +22,7 @@ import java.util.Optional;
 public class UserController {
 
     private UserDBService userService;
-    private UserValidatior userValidatior;
+
 
     @Autowired
     public UserController(UserDBService userService) {

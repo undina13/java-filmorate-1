@@ -90,7 +90,7 @@ public class FilmDbStorage implements FilmStorage {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
-        // addDirectorToFilm(filmId, film.getDirectors());
+
         directorFilmStorage.addDirectorToFilm(filmId, film.getDirectors());
         return film;
     }
