@@ -6,5 +6,6 @@ import java.util.TreeSet;
 
 public interface DirectorFilmStorage {
     void addDirectorToFilm(int filmId, TreeSet<Director> directors);
+
     void removeDirectorFromFilm(int filmId);
 }

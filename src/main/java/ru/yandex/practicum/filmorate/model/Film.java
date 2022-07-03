@@ -37,7 +37,8 @@ public class Film {
         this.duration = duration;
         this.mpa = mpa;
     }
-     public void setDirectors (TreeSet<Director> directors) {
-        this.directors=directors;
-     }
+
+    public void setDirectors(TreeSet<Director> directors) {
+        this.directors = directors;
+    }
 }

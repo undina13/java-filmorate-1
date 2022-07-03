@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -57,7 +56,5 @@ public class LikeStorage {
         jdbcTemplate.update(sql1Query,
 
                 filmId);
-
-
     }
 }
