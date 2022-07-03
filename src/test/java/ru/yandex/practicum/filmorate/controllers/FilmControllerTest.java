@@ -41,9 +41,9 @@ class FilmControllerTest {
     @Test
     void createAllOk() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/films")
-                        .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post("/films")
+                                .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -55,18 +55,18 @@ class FilmControllerTest {
     @Test
     void createBadData() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/films")
-                        .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post("/films")
+                                .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void createEmptyName() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/films")
-                        .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post("/films")
+                                .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -74,9 +74,9 @@ class FilmControllerTest {
     @Test
     void createTooLongDescription() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/films")
-                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some long descriptionfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post("/films")
+                                .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some long descriptionfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -84,9 +84,9 @@ class FilmControllerTest {
     @Test
     void putAllOk() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/films")
-                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"likes\":[3],\"genres\":[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.put("/films")
+                                .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"likes\":[3],\"genres\":[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -97,9 +97,9 @@ class FilmControllerTest {
     @Test
     void putBadData() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/films")
-                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.put("/films")
+                                .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -107,9 +107,9 @@ class FilmControllerTest {
     @Test
     void putEmptyName() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/films")
-                        .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.put("/films")
+                                .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -117,9 +117,9 @@ class FilmControllerTest {
     @Test
     void putTooLongDescription() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/films")
-                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some long descriptionfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\"}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.put("/films")
+                                .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some long descriptionfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\"}")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -135,5 +135,24 @@ class FilmControllerTest {
 
     }
 
-    
+
+
+    @Test
+    void deleteFilm() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/films")
+                        .content("{\"name\":\"New film 2\",\"releaseDate\":\"1999-04-30\",\"description 2\":\"New film to delete 2\",\"duration\":20,\"mpa\":{\"id\":1},\"genres\":[{\"id\":1},{\"id\":2},{\"id\":3}]}")
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/films/5")).andExpect(status().isOk());
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/films/5")).andExpect(status().isNotFound()) ;
+    }
+
+    @Test
+    void deleteNonExistentFilm() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/films/135")).andExpect(status().isNotFound())
+        ;
+    }
 }
