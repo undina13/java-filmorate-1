@@ -69,6 +69,8 @@ public class FilmDbStorage implements FilmStorage {
                     "ORDER BY FILM.RELEASE_DATE;";
     private final String GET_COMMON_FILMS = "SELECT film_id FROM LIKES WHERE user_id = ? " +
             "INTERSECT SELECT film_id FROM LIKES WHERE user_id = ?";
+    String SEARCH_BY_TITLE = "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like ? ";
+    String SEARCH_BY_DIRECTOR = "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like ? ";
 
 
     private final JdbcTemplate jdbcTemplate;
@@ -204,18 +206,15 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> search(String query, List<String> by) {
-
-        String sqlTitle = "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like  '%" + query.toLowerCase() + "%' ";
-        String sqlDirector = "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like '%" + query
-                .toLowerCase() + "%' ";
+        String search = "%" + query.toLowerCase() + "%";
         List<Film> films = new ArrayList<>();
         if (by.containsAll(List.of("director", "title"))) {
-            films = jdbcTemplate.query(sqlDirector, (rs, rowNum) -> get(rs.getInt("film_id")));
-            films.addAll(jdbcTemplate.query(sqlTitle, (rs, rowNum) -> get(rs.getInt("film_id"))));
+            films = jdbcTemplate.query(SEARCH_BY_DIRECTOR, (rs, rowNum) -> get(rs.getInt("film_id")), search);
+            films.addAll(jdbcTemplate.query(SEARCH_BY_TITLE, (rs, rowNum) -> get(rs.getInt("film_id")), search));
         } else if (by.contains("title")) {
-            films = jdbcTemplate.query(sqlTitle, (rs, rowNum) -> get(rs.getInt("film_id")));
+            films = jdbcTemplate.query(SEARCH_BY_TITLE, (rs, rowNum) -> get(rs.getInt("film_id")), search);
         } else if (by.contains("director")) {
-            films = jdbcTemplate.query(sqlDirector, (rs, rowNum) -> get(rs.getInt("film_id")));
+            films = jdbcTemplate.query(SEARCH_BY_DIRECTOR, (rs, rowNum) -> get(rs.getInt("film_id")), search);
         }
 
         return films;
