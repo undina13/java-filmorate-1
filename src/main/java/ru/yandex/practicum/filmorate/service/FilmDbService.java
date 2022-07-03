@@ -13,15 +13,19 @@ import java.util.List;
 
 @Service
 public class FilmDbService {
-   private FilmStorage filmStorage;
-   private LikeStorage likeStorage;
+    private FilmStorage filmStorage;
+    private LikeStorage likeStorage;
+    private DirectorService directorService;
+
 
     @Autowired
     public FilmDbService
             (@Qualifier("filmDbStorage") FilmStorage filmStorage,
-             LikeStorage likeStorage) {
+             LikeStorage likeStorage,
+             DirectorService directorService) {
         this.filmStorage = filmStorage;
         this.likeStorage = likeStorage;
+        this.directorService = directorService;
     }
 
     public Collection<Film> getAll() {
@@ -56,6 +60,14 @@ public class FilmDbService {
             throw new FilmNotFoundException("user or film not found");
         }
         likeStorage.deleteLike(filmId, userId);
+    }
+
+    public List<Film> getAllFilmsOfDirectorSortedByLikesOrYears(int id, String sortBy) {
+        directorService.getDirector(id);
+        if (sortBy.equals("likes")) {
+            return filmStorage.getAllFilmsOfDirectorSortedByLikes(id);
+        }
+        return filmStorage.getAllFilmsOfDirectorSortedByYears(id);
     }
 
     public List<Film> getCommonFilms(int userId, int friendId) {
