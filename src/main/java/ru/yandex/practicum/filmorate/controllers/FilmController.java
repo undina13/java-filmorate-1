@@ -27,7 +27,6 @@ public class FilmController {
     @Autowired
     public FilmController(FilmDbService filmDbService, DirectorService directorService) {
         this.filmDbService = filmDbService;
-        this.directorService = directorService;
     }
 
     @GetMapping
@@ -72,6 +71,13 @@ public class FilmController {
     public void deleteLike(@PathVariable int id, @PathVariable int userId){
         filmDbService.deleteLike(id, userId);
     }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
+                                                         @RequestParam String sortBy) {
+        return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId,sortBy);
+    }
+
 
     @GetMapping("/search")
     public Collection<Film> search(@RequestParam String query, @RequestParam List<String> by) {

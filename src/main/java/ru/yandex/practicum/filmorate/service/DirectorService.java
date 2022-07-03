@@ -1,25 +1,25 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DirectorService {
     private final DirectorStorage directorStorage;
 
+    @Autowired
     public DirectorService(DirectorStorage directorStorage) {
         this.directorStorage = directorStorage;
     }
 
 
     public Director addDirector(Director director) {
-       return directorStorage.addDirector(director);
+        return directorStorage.addDirector(director);
     }
 
     public Director updateDirector(Director director) {
@@ -41,6 +41,4 @@ public class DirectorService {
         getDirector(id);
         return directorStorage.removeDirector(id);
     }
-
-
 }
