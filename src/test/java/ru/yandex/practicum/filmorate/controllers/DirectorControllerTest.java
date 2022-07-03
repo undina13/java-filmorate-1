@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
@@ -32,6 +33,7 @@ public class DirectorControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @DirtiesContext
     public void shouldAddDirectorTest() throws Exception {
         Director director = new Director(
                 1,
@@ -61,6 +63,7 @@ public class DirectorControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void shouldUpdateDirector() throws Exception {
         Director director1 = new Director(
                 1,
@@ -82,6 +85,7 @@ public class DirectorControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void shouldNotUpdateDirector() throws Exception {
         Director director1 = new Director(
                 1,
@@ -102,6 +106,7 @@ public class DirectorControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void shouldGetDirector() throws Exception {
         Director director = new Director(
                 1,
@@ -111,7 +116,7 @@ public class DirectorControllerTest {
         directorDbStorage.addDirector(director);
 
         mockMvc.perform(
-                        get("/directors/1")
+                        get("/directors/3")
                                 .content(objectMapper.writeValueAsString(director))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -120,6 +125,7 @@ public class DirectorControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void shouldNotGetDirector() throws Exception {
         Director director = new Director(
                 1,
@@ -137,6 +143,7 @@ public class DirectorControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void shouldRemoveDirector() throws Exception {
         Director director = new Director(
                 1,

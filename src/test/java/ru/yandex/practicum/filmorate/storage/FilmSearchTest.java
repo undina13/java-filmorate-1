@@ -41,27 +41,6 @@ public class FilmSearchTest {
     private MockMvc mockMvc;
 
 
-   @BeforeEach
-   void setup() {
-//        Director director1 = new Director(1, "Режиссер1");
-//        Director director2 = new Director(2, "фильм1");
-//        directorDbStorage.addDirector(director1);
-//        directorDbStorage.addDirector(director2);
-        TreeSet<Director> set1 = new TreeSet<>();
-        set1.add(director1);
-        directorFilmDbStorage.addDirectorToFilm(1, set1);
-        TreeSet<Director> set2 = new TreeSet<>();
-        set2.add(director2);
-        directorFilmDbStorage.addDirectorToFilm(2, set2);
-    }
-     @AfterEach
-     void clean(){
-       directorFilmDbStorage.removeDirectorFromFilm(2);
-         directorFilmDbStorage.removeDirectorFromFilm(1);
-         directorDbStorage.removeDirector(2);
-         directorDbStorage.removeDirector(1);
-     }
-
     @Test
     void SearchByDirector() throws Exception {
 
@@ -93,10 +72,5 @@ public class FilmSearchTest {
                         .json("[{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"}},{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-03-15\",\"duration\":180,\"likes\":[3],\"genres\":[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"directors\":[{\"id\":1,\"name\":\"Режиссер1\"}],\"mpa\":{\"id\":1,\"name\":\"G\"}}]"));
     }
 
-    @Test
-    void SearchByTitleAndDirectorNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/films/search?query=undina&by=director,title"))
-                .andExpect(status().isNotFound());
-         }
 
 }
