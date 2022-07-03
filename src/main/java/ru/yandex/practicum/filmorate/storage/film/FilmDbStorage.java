@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.storage.GenreFilmStorage;
 import ru.yandex.practicum.filmorate.storage.MPAADbStorage;
 import ru.yandex.practicum.filmorate.storage.director.DirectorFilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -89,6 +90,7 @@ public class FilmDbStorage implements FilmStorage {
         this.directorFilmStorage = directorFilmStorage;
     }
 
+
     @Override
     public Film create(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -111,6 +113,7 @@ public class FilmDbStorage implements FilmStorage {
                 genreFilmStorage.put(genre.getId(), film.getId());
             }
         }
+
         directorFilmStorage.addDirectorToFilm(filmId, film.getDirectors());
         return film;
     }
@@ -263,7 +266,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteFilm(int id) {
-        get(id);
+      //  get(id);
         jdbcTemplate.update(FILM_DELETE_SQL,
                 id);
     }

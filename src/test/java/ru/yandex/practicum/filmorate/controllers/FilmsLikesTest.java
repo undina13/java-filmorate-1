@@ -44,7 +44,7 @@ public class FilmsLikesTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/films/1/like/1"))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1, 3));
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1,2, 3));
     }
 
     @Test
@@ -53,23 +53,7 @@ public class FilmsLikesTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/films/2/like/1"))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(3));
+        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(2, 3));
     }
 
-//    @Test
-//    @DirtiesContext
-//    public void getPopular() throws Exception {
-//        filmDbService.putLike(1, 1);
-//        filmDbService.putLike(1, 2);
-//        filmDbService.putLike(2, 3);
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/films/popular?count=2"))
-//                .andExpect(status().isOk())
-//                .andDo(print())
-//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(content()
-//                   //     .json("[{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2,3],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[],\"mpa\":{\"id\":4,\"name\":\"2\"}},{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\",\"releaseDate\":\"2020-08-16\",\"duration\":120,\"likes\":[2],\"genres\":[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"directors\":[],\"mpa\":{\"id\":5,\"name\":\"3\"}}]"));
-//
-//                       .json(" [{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2,3],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[],\"mpa\":{\"id\":4,\"name\":\"2\"}},{\"id\":2,\"name\":\"�����2\",\"description\":\"�����-�� ��������\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2,3],\"genres\":[{\"id\":5,\"name\":\"��������������\"}],\"directors\":[],\"mpa\":{\"id\":4,\"name\":\"2\"}}]"));
-//    }
 }

@@ -51,4 +51,13 @@ public class LikeStorage {
                 Operation.REMOVE,
                 filmId));
     }
+
+    public void deleteAllLike(int filmId) {
+        String sql1Query = "delete from LIKES where FILM_ID = ? ";
+        jdbcTemplate.update(sql1Query,
+
+                filmId);
+
+
+    }
 }
