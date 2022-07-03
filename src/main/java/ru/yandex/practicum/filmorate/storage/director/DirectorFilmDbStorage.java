@@ -8,6 +8,9 @@ import java.util.TreeSet;
 
 @Component
 public class DirectorFilmDbStorage implements DirectorFilmStorage {
+    private final String DIRECTOR_INSERT_TO_FILM = "INSERT INTO DIRECTOR_FILM (DIRECTOR_ID, FILM_ID) VALUES ( ?,? )";
+    private final String DIRECTOR_DELETE_FROM_FILM = "DELETE FROM director_film WHERE film_id=?";
+
     private final JdbcTemplate jdbcTemplate;
 
     public DirectorFilmDbStorage(JdbcTemplate jdbcTemplate) {
@@ -16,7 +19,6 @@ public class DirectorFilmDbStorage implements DirectorFilmStorage {
 
     @Override
     public void addDirectorToFilm(int filmId, TreeSet<Director> directors) {
-        String DIRECTOR_INSERT_TO_FILM = "INSERT INTO DIRECTOR_FILM (DIRECTOR_ID, FILM_ID) VALUES ( ?,? )";
         for (Director director : directors) {
             jdbcTemplate.update(DIRECTOR_INSERT_TO_FILM, director.getId(), filmId);
         }
@@ -24,7 +26,6 @@ public class DirectorFilmDbStorage implements DirectorFilmStorage {
 
     @Override
     public void removeDirectorFromFilm(int filmId) {
-        String DIRECTOR_DELETE_FROM_FILM = "DELETE FROM director_film WHERE film_id=?";
         jdbcTemplate.update(DIRECTOR_DELETE_FROM_FILM, filmId);
     }
 }

@@ -17,7 +17,6 @@ public class FilmDbService {
     private LikeStorage likeStorage;
     private DirectorService directorService;
 
-
     @Autowired
     public FilmDbService
             (@Qualifier("filmDbStorage") FilmStorage filmStorage,
@@ -37,7 +36,7 @@ public class FilmDbService {
     }
 
     public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
-        return filmStorage.getBestFilms(count,genreId,year);
+        return filmStorage.getBestFilms(count, genreId, year);
     }
 
     public Film create(Film film) {
@@ -74,15 +73,11 @@ public class FilmDbService {
         return filmStorage.getCommonFilms(userId, friendId);
     }
 
-    public List<Film> getAllFilmsOfDirectorSortedByLikes() {
-        return null;
-    }
-
     public Collection<Film> search(String query, List<String> by) {
         return filmStorage.search(query, by);
     }
 
-    public void deleteFilm(int id){
+    public void deleteFilm(int id) {
         filmStorage.deleteFilm(id);
     }
 }

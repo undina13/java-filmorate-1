@@ -37,10 +37,11 @@ public class UserDbStorage implements UserStorage {
     private final String USER_SET_FRIENDS_SQL = "SELECT USER_ID From USERS where USER_ID IN " +
             "(SELECT FRIEND_ID FROM FRIENDS where USER_ID =?)";
     private final String USER_DELETE_SQL = "delete from USERS where USER_ID = ? ";
-    private final  String RECOMMENDATION_FIND_USER = "select user_id, count(film_id) FROM LIKES WHERE film_id IN (\n" +
+    private final String RECOMMENDATION_FIND_USER = "select user_id, count(film_id) FROM LIKES WHERE film_id IN (\n" +
             "SELECT FILM_ID FROM LIKES WHERE USER_ID = ?) AND LIKES.USER_ID != ? GROUP BY USER_ID\n" +
             "ORDER BY COUNT(FILM_ID) DESC LIMIT 1";
-    private final  String GET_RECOMMENDATIONS = "SELECT * FROM LIKES WHERE FILM_ID in (SELECT FILM_ID FROM LIKEs WHERE USER_ID = ?) AND FILM_ID NOT IN(SELECT FILM_ID FROM LIKEs WHERE USER_ID = ?)";
+    private final String GET_RECOMMENDATIONS = "SELECT * FROM LIKES WHERE FILM_ID in (SELECT FILM_ID FROM LIKEs" +
+            " WHERE USER_ID = ?) AND FILM_ID NOT IN(SELECT FILM_ID FROM LIKEs WHERE USER_ID = ?)";
 
     private final JdbcTemplate jdbcTemplate;
     private final FilmDbStorage filmDbStorage;
@@ -121,7 +122,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<Film> getRecommendations(int id) {
         List<Film> films = new ArrayList<>();
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(RECOMMENDATION_FIND_USER,id, id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(RECOMMENDATION_FIND_USER, id, id);
         Integer userNewId = null;
         if (userRows.next()) {
             userNewId = userRows.getInt("user_id");
@@ -156,6 +157,7 @@ public class UserDbStorage implements UserStorage {
         }
         return user;
     }
+
     @Override
     public void deleteUser(int id) {
         get(id);

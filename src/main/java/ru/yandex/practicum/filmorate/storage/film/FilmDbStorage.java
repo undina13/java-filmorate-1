@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.model.MPAA;
 import ru.yandex.practicum.filmorate.storage.GenreFilmStorage;
 import ru.yandex.practicum.filmorate.storage.MPAADbStorage;
 import ru.yandex.practicum.filmorate.storage.director.DirectorFilmStorage;
-import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -71,7 +70,8 @@ public class FilmDbStorage implements FilmStorage {
     private final String GET_COMMON_FILMS = "SELECT film_id FROM LIKES WHERE user_id = ? " +
             "INTERSECT SELECT film_id FROM LIKES WHERE user_id = ?";
     String SEARCH_BY_TITLE = "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like ? ";
-    String SEARCH_BY_DIRECTOR = "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like ? ";
+    String SEARCH_BY_DIRECTOR = "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID " +
+            "JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like ? ";
 
 
     private final JdbcTemplate jdbcTemplate;
@@ -89,7 +89,6 @@ public class FilmDbStorage implements FilmStorage {
         this.mpaaDbStorage = mpaaDbStorage;
         this.directorFilmStorage = directorFilmStorage;
     }
-
 
     @Override
     public Film create(Film film) {
@@ -152,19 +151,19 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Collection<Film> getAll() {
         return jdbcTemplate.queryForStream(
-                FILM_ALL_SQL
-                ,
-                (rs, rowNum) ->
-                        new Film(
-                                rs.getInt("film_id"),
-                                rs.getString("name"),
-                                rs.getString("description"),
-                                rs.getDate("release_Date").toLocalDate(),
-                                rs.getInt("duration"),
-                                new MPAA(rs.getInt("mpaa_id"),
-                                        rs.getString(8))
-                        )
-        )
+                        FILM_ALL_SQL
+                        ,
+                        (rs, rowNum) ->
+                                new Film(
+                                        rs.getInt("film_id"),
+                                        rs.getString("name"),
+                                        rs.getString("description"),
+                                        rs.getDate("release_Date").toLocalDate(),
+                                        rs.getInt("duration"),
+                                        new MPAA(rs.getInt("mpaa_id"),
+                                                rs.getString(8))
+                                )
+                )
                 .map(this::setGenre)
                 .map(this::setLikes)
                 .map(this::setDirector)
@@ -212,12 +211,16 @@ public class FilmDbStorage implements FilmStorage {
         String search = "%" + query.toLowerCase() + "%";
         List<Film> films = new ArrayList<>();
         if (by.containsAll(List.of("director", "title"))) {
-            films = jdbcTemplate.query(SEARCH_BY_DIRECTOR, (rs, rowNum) -> get(rs.getInt("film_id")), search);
-            films.addAll(jdbcTemplate.query(SEARCH_BY_TITLE, (rs, rowNum) -> get(rs.getInt("film_id")), search));
+            films = jdbcTemplate.query(SEARCH_BY_DIRECTOR, (rs, rowNum) ->
+                    get(rs.getInt("film_id")), search);
+            films.addAll(jdbcTemplate.query(SEARCH_BY_TITLE, (rs, rowNum) ->
+                    get(rs.getInt("film_id")), search));
         } else if (by.contains("title")) {
-            films = jdbcTemplate.query(SEARCH_BY_TITLE, (rs, rowNum) -> get(rs.getInt("film_id")), search);
+            films = jdbcTemplate.query(SEARCH_BY_TITLE, (rs, rowNum) ->
+                    get(rs.getInt("film_id")), search);
         } else if (by.contains("director")) {
-            films = jdbcTemplate.query(SEARCH_BY_DIRECTOR, (rs, rowNum) -> get(rs.getInt("film_id")), search);
+            films = jdbcTemplate.query(SEARCH_BY_DIRECTOR, (rs, rowNum) ->
+                    get(rs.getInt("film_id")), search);
         }
 
         return films;
@@ -266,7 +269,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteFilm(int id) {
-      //  get(id);
+        //  get(id);
         jdbcTemplate.update(FILM_DELETE_SQL,
                 id);
     }

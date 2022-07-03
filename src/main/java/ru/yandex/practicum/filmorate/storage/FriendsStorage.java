@@ -8,15 +8,14 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Component
 @Slf4j
 public class FriendsStorage {
-    private final String FRIEND_INSERT_SQL="insert into FRIENDS(USER_ID, FRIEND_ID) values (?, ?)";
-    private final String FRIEND_DELETE_SQL="delete from FRIENDS where USER_ID = ? AND FRIEND_ID = ?";
+    private final String FRIEND_INSERT_SQL = "insert into FRIENDS(USER_ID, FRIEND_ID) values (?, ?)";
+    private final String FRIEND_DELETE_SQL = "delete from FRIENDS where USER_ID = ? AND FRIEND_ID = ?";
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
 
