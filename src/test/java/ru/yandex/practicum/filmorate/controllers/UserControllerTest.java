@@ -200,10 +200,6 @@ public class UserControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        //     .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\",
-                        //     \"releaseDate\":\"2022-03-15\",\"duration\":180,\"likes\":[2,3],\"genres\":
-                        //     [{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\"
-                        //     :{\"id\":1,\"name\":\"G\"}}]"));
                         .json("[{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"" +
                                 ",\"releaseDate\":\"2020-10-13\",\"duration\":120,\"likes\":[2,3],\"genres\":" +
                                 "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"directors\":" +

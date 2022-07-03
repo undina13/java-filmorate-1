@@ -193,10 +193,4 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.get("/films/5")).andExpect(status().isNotFound());
     }
 
-//    @Test
-//    void deleteNonExistentFilm() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.delete("/films/135")).andExpect(status().isNotFound())
-//        ;
-//    }
 }
