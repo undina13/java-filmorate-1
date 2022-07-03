@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserDBService;
 import ru.yandex.practicum.filmorate.validator.UserValidatior;
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class UserController {
 
     private UserDBService userService;
-    private UserValidatior userValidatior;
+
 
     @Autowired
     public UserController(UserDBService userService) {
@@ -80,5 +81,9 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable int id){
         userService.deleteUser(id);
+    }
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+        return userService.getRecommendations(id);
     }
 }

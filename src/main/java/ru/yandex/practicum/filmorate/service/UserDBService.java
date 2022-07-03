@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.EventStorage;
 import ru.yandex.practicum.filmorate.storage.FriendsStorage;
@@ -78,5 +79,9 @@ public class UserDBService {
 
     public void deleteUser(int id){
         userStorage.deleteUser(id);
+    }
+
+    public List<Film> getRecommendations(int id) {
+        return userStorage.getRecommendations(id);
     }
 }
