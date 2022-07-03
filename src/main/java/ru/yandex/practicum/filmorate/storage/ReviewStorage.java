@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -9,10 +10,16 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -34,9 +41,12 @@ public class ReviewStorage {
     private final String REVIEWS_LIMIT_SQL = "SELECT * FROM REVIEWS LIMIT ?";
     private final Logger log = LoggerFactory.getLogger(ReviewStorage.class);
     private final JdbcTemplate jdbcTemplate;
+    private final EventStorage eventStorage;
 
-    public ReviewStorage(JdbcTemplate jdbcTemplate) {
+    @Autowired
+    public ReviewStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.eventStorage = eventStorage;
     }
 
     public static int getIdCounter() {
@@ -74,6 +84,13 @@ public class ReviewStorage {
                 review.getIsPositive(),
                 review.getUserId(),
                 review.getFilmId());
+
+        eventStorage.createEvent(new Event(0,
+                LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
+                review.getUserId(),
+                EventType.REVIEW,
+                Operation.ADD,
+                review.getId()));
         return review;
     }
 
@@ -87,6 +104,14 @@ public class ReviewStorage {
                     review.getContent(),
                     review.getIsPositive(),
                     review.getId());
+
+            Review review1 = getReviewById(review.getId()).get();
+            eventStorage.createEvent(new Event(0,
+                    LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
+                    review1.getUserId(),
+                    EventType.REVIEW,
+                    Operation.UPDATE,
+                    review1.getId()));
             return review;
         } else {
             throw new ReviewNotFoundException("Такого обзора нет");
@@ -129,7 +154,14 @@ public class ReviewStorage {
         SqlRowSet reviewRows = jdbcTemplate.queryForRowSet(REVIEW_BY_ID_SQL, reviewId);
         if (reviewRows.next()) {
             log.debug("Обзор удален");
+            Review review = getReviewById(reviewId).get();
             jdbcTemplate.update(REVIEW_DELETE_SQL, reviewId);
+            eventStorage.createEvent(new Event(0,
+                    LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
+                    review.getUserId(),
+                    EventType.REVIEW,
+                    Operation.REMOVE,
+                    review.getId()));
         } else {
             throw new ReviewNotFoundException("Такого обзора нет");
         }

@@ -26,7 +26,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-class ReviewStorageTest {               //Тесты запускать по очереди !!!
+class ReviewStorageTest {
     private final ReviewStorage reviewStorage;
     private final FilmDbStorage filmDbStorage;
     private final UserDbStorage userDbStorage;

@@ -13,6 +13,8 @@ import java.util.List;
 @Component
 @Slf4j
 public class MPAADbStorage {
+    private final String MPA_GET_SQL = "select * from MPAA where MPAA_ID = ?";
+    private final String MPA_ALL_SQL = "select * from MPAA";
     private final JdbcTemplate jdbcTemplate;
 
     public MPAADbStorage(JdbcTemplate jdbcTemplate) {
@@ -20,7 +22,7 @@ public class MPAADbStorage {
     }
 
     public MPAA getById(int id) {
-        SqlRowSet mpaaRows = jdbcTemplate.queryForRowSet("select * from MPAA where MPAA_ID = ?", id);
+        SqlRowSet mpaaRows = jdbcTemplate.queryForRowSet(MPA_GET_SQL, id);
         if (mpaaRows.next()) {
             MPAA mpaa = new MPAA(
                     mpaaRows.getInt("mpaa_id"),
@@ -33,8 +35,7 @@ public class MPAADbStorage {
     }
 
     public List<MPAA> getAll() {
-        String sql = "select * from MPAA";
-        List<MPAA> mpaas = jdbcTemplate.query(sql, (rs, rowNum) -> makeMpaa(rs));
+        List<MPAA> mpaas = jdbcTemplate.query(MPA_ALL_SQL, (rs, rowNum) -> makeMpaa(rs));
         return mpaas;
     }
 

@@ -14,8 +14,9 @@ public interface FilmStorage {
 
     Film get(int id);
 
-    List<Film> getBestFilms(int count);
+    List<Film> getBestFilms(int count, Integer genreId, Integer year);
 
+    List<Film> getCommonFilms(int userId, int friendId);
 
     Collection<Film> search(String query, List<String> by);
 }
