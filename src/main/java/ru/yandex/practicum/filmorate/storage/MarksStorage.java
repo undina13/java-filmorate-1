@@ -13,14 +13,15 @@ import java.time.ZoneOffset;
 
 @Component
 @Slf4j
-public class LikeStorage {
+public class MarksStorage {
+    //TODO все переделать нафиг!
     private final String LIKE_INSERT_SQL = "insert into LIKES(USER_ID, FILM_ID)  values (?, ?)";
     private final String LIKE_DELETE_SQL = "delete from LIKES where USER_ID = ? and  FILM_ID = ?";
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
 
     @Autowired
-    public LikeStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage) {
+    public MarksStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.eventStorage = eventStorage;
     }

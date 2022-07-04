@@ -22,7 +22,7 @@ public class Film {
 
     private Integer duration;
 
-    private Set<Integer> likes;
+    private Set<Marks> marks;
 
     private Set<Genre> genres;
     private TreeSet<Director> directors = new TreeSet<>();

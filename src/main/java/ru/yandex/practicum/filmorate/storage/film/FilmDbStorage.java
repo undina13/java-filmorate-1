@@ -165,7 +165,7 @@ public class FilmDbStorage implements FilmStorage {
                                 )
                 )
                 .map(this::setGenre)
-                .map(this::setLikes)
+ //TODO               .map(this::setLikes)
                 .map(this::setDirector)
                 .collect(Collectors.toList());
     }
@@ -185,7 +185,7 @@ public class FilmDbStorage implements FilmStorage {
                             filmRows.getString(8))
             );
             setGenre(film);
-            setLikes(film);
+       //TODO     setLikes(film);
             setDirector(film);
             return film;
         }
@@ -236,7 +236,7 @@ public class FilmDbStorage implements FilmStorage {
                 new MPAA(rs.getInt("mpaa_id"),
                         rs.getString(8)));
         setGenre(film);
-        setLikes(film);
+   //TODO     setLikes(film);
         setDirector(film);
         return film;
     }
@@ -250,15 +250,15 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private Film setLikes(Film film) {
-        List<Integer> likes = jdbcTemplate.query(FILM_SET_LIKES_SQL, (gs, rowNum) -> gs.getInt("User_id"),
-                film.getId());
-        if (likes.isEmpty()) {
-            return film;
-        }
-        film.setLikes(new HashSet<>(likes));
-        return film;
-    }
+// TODO//   private Film setLikes(Film film) {
+//        List<Integer> likes = jdbcTemplate.query(FILM_SET_LIKES_SQL, (gs, rowNum) -> gs.getInt("User_id"),
+//                film.getId());
+//        if (likes.isEmpty()) {
+//            return film;
+//        }
+//       film.setLikes(new HashSet<>(likes));
+//        return film;
+//    }
 
     private Genre makeGenre(ResultSet gs) throws SQLException {
         return new Genre(
@@ -269,7 +269,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteFilm(int id) {
-        //  get(id);
+
         jdbcTemplate.update(FILM_DELETE_SQL,
                 id);
     }
@@ -290,26 +290,27 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-    @Override
-    public List<Film> getAllFilmsOfDirectorSortedByLikes(int id) {
-        List<Film> films = new ArrayList<>();
-        SqlRowSet filmsRows = jdbcTemplate.queryForRowSet(FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_LIKES, id);
-        while (filmsRows.next()) {
-            Film film = new Film(
-                    filmsRows.getInt("film_id"),
-                    filmsRows.getString("name"),
-                    filmsRows.getString("description"),
-                    filmsRows.getDate("release_Date").toLocalDate(),
-                    filmsRows.getInt("duration"),
-                    new MPAA(filmsRows.getInt("mpaa_id"),
-                            mpaaDbStorage.getById(filmsRows.getInt("mpaa_id")).getName()
-                    ));
-            film.setGenres(setGenre(film).getGenres());
-            film.setDirectors(setDirector(film).getDirectors());
-            films.add(film);
-        }
-        return films;
-    }
+//TODO
+//    @Override
+//    public List<Film> getAllFilmsOfDirectorSortedByLikes(int id) {
+//        List<Film> films = new ArrayList<>();
+//        SqlRowSet filmsRows = jdbcTemplate.queryForRowSet(FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_LIKES, id);
+//        while (filmsRows.next()) {
+//            Film film = new Film(
+//                    filmsRows.getInt("film_id"),
+//                    filmsRows.getString("name"),
+//                    filmsRows.getString("description"),
+//                    filmsRows.getDate("release_Date").toLocalDate(),
+//                    filmsRows.getInt("duration"),
+//                    new MPAA(filmsRows.getInt("mpaa_id"),
+//                            mpaaDbStorage.getById(filmsRows.getInt("mpaa_id")).getName()
+//                    ));
+//            film.setGenres(setGenre(film).getGenres());
+//            film.setDirectors(setDirector(film).getDirectors());
+//            films.add(film);
+//        }
+//        return films;
+//    }
 
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByYears(int id) {

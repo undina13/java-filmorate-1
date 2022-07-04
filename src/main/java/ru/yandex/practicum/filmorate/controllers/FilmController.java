@@ -59,21 +59,22 @@ public class FilmController {
         return filmDbService.put(film);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public void putLike(@PathVariable int id, @PathVariable int userId) {
-        filmDbService.putLike(id, userId);
-    }
+//  TODO//  @PutMapping("/{id}/like/{userId}")
+//    public void putLike(@PathVariable int id, @PathVariable int userId) {
+//        filmDbService.putLike(id, userId);
+//    }
+//
+//  TODO//  @DeleteMapping("/{id}/like/{userId}")
+//    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+//        filmDbService.deleteLike(id, userId);
+//    }
 
-    @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-        filmDbService.deleteLike(id, userId);
-    }
 
-    @GetMapping("/director/{directorId}")
-    public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
-                                                         @RequestParam String sortBy) {
-        return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId, sortBy);
-    }
+//  TODO//  @GetMapping("/director/{directorId}")
+//    public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
+//                                                         @RequestParam String sortBy) {
+//        return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId, sortBy);
+//    }
 
 
     @GetMapping("/search")

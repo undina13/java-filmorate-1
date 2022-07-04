@@ -16,7 +16,7 @@ public interface FilmStorage {
 
     List<Film> getBestFilms(int count, Integer genreId, Integer year);
 
-    List<Film> getAllFilmsOfDirectorSortedByLikes(int id);
+  // TODO  List<Film> getAllFilmsOfDirectorSortedByLikes(int id);
 
     List<Film> getAllFilmsOfDirectorSortedByYears(int id);
 
