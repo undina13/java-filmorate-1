@@ -132,6 +132,7 @@ public class UserDbStorage implements UserStorage {
             if (filmIdRows.next()) {
                 int filmId = filmIdRows.getInt("film_id");
                 films.add(filmDbStorage.get(filmId));
+                //  TODO подтянуть оценки
             }
         }
         return films;

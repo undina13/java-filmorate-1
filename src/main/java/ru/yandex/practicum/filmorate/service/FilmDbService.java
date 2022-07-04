@@ -14,16 +14,16 @@ import java.util.List;
 @Service
 public class FilmDbService {
     private FilmStorage filmStorage;
-    private MarksStorage marksStorage;
+ //   private MarksStorage marksStorage;
     private DirectorService directorService;
 
     @Autowired
     public FilmDbService
             (@Qualifier("filmDbStorage") FilmStorage filmStorage,
-             MarksStorage marksStorage,
+    //         MarksStorage marksStorage,
              DirectorService directorService) {
         this.filmStorage = filmStorage;
-        this.marksStorage = marksStorage;
+    //    this.marksStorage = marksStorage;
         this.directorService = directorService;
     }
 
@@ -35,9 +35,9 @@ public class FilmDbService {
         return filmStorage.get(id);
     }
 
-    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
-        return filmStorage.getBestFilms(count, genreId, year);
-    }
+//    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
+//        return filmStorage.getBestFilms(count, genreId, year);
+//    }
 
     public Film create(Film film) {
         return filmStorage.create(film);
@@ -69,9 +69,9 @@ public class FilmDbService {
 //        return filmStorage.getAllFilmsOfDirectorSortedByYears(id);
 //    }
 
-    public List<Film> getCommonFilms(int userId, int friendId) {
-        return filmStorage.getCommonFilms(userId, friendId);
-    }
+ //   public List<Film> getCommonFilms(int userId, int friendId) {
+//        return filmStorage.getCommonFilms(userId, friendId);
+//    }
 
     public Collection<Film> search(String query, List<String> by) {
         return filmStorage.search(query, by);

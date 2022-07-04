@@ -14,9 +14,11 @@ import java.time.ZoneOffset;
 @Component
 @Slf4j
 public class MarksStorage {
-    //TODO все переделать нафиг!
-    private final String LIKE_INSERT_SQL = "insert into LIKES(USER_ID, FILM_ID)  values (?, ?)";
-    private final String LIKE_DELETE_SQL = "delete from LIKES where USER_ID = ? and  FILM_ID = ?";
+
+    private final String MARK_INSERT_SQL = "insert into MARKS(USER_ID, FILM_ID, MARK)  values (?, ?, ?)";
+    private final String MARK_DELETE_SQL = "delete from MARKS where USER_ID = ? and  FILM_ID = ?";
+    String DELETE_ALL_MARKS = "delete from MARKS where FILM_ID = ? ";
+
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
 
@@ -26,36 +28,35 @@ public class MarksStorage {
         this.eventStorage = eventStorage;
     }
 
-    public void putLike(int filmId, int userId) {
-        jdbcTemplate.update(LIKE_INSERT_SQL,
+    public void putMark(int filmId, int userId, int mark) {
+        jdbcTemplate.update(MARK_INSERT_SQL,
                 userId,
-                filmId);
+                filmId,
+                mark);
 
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                 userId,
-                EventType.LIKE,
+                EventType.MARK,
                 Operation.ADD,
                 filmId));
     }
 
     public void deleteLike(int filmId, int userId) {
-        jdbcTemplate.update(LIKE_DELETE_SQL,
+        jdbcTemplate.update(MARK_DELETE_SQL,
                 userId,
                 filmId);
 
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                 userId,
-                EventType.LIKE,
+                EventType.MARK,
                 Operation.REMOVE,
                 filmId));
     }
 
-    public void deleteAllLike(int filmId) {
-        String sql1Query = "delete from LIKES where FILM_ID = ? ";
-        jdbcTemplate.update(sql1Query,
-
+    public void deleteAllMarks(int filmId) {
+        jdbcTemplate.update(DELETE_ALL_MARKS,
                 filmId);
     }
 }
