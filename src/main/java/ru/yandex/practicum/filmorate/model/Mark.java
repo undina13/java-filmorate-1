@@ -2,10 +2,16 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 @Data
 public class Mark {
     int user_id;
     int film_id;
+
+    @Min(1)
+    @Max(10)
     int mark;
 
     public Mark(int user_id, int film_id, int mark) {

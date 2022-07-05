@@ -41,6 +41,19 @@ public class Film {
         this.mpa = mpa;
         this.rate = 0;
     }
+    public Film(){
+
+    }
+
+    public Film(int id, String name, String description, LocalDate releaseDate, Integer duration, MPAA mpa, double rate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
+        this.rate = rate;
+    }
 
     public void setDirectors(TreeSet<Director> directors) {
         this.directors = directors;

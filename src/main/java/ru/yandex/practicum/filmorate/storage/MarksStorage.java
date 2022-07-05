@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -21,11 +22,13 @@ public class MarksStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
+    private  final FilmDbStorage filmDbStorage;
 
     @Autowired
-    public MarksStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage) {
+    public MarksStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage, FilmDbStorage filmDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.eventStorage = eventStorage;
+        this.filmDbStorage = filmDbStorage;
     }
 
     public void putMark(int filmId, int userId, int mark) {
@@ -33,6 +36,8 @@ public class MarksStorage {
                 userId,
                 filmId,
                 mark);
+
+
 
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
@@ -42,10 +47,12 @@ public class MarksStorage {
                 filmId));
     }
 
-    public void deleteLike(int filmId, int userId) {
+    public void deleteMark(int filmId, int userId) {
         jdbcTemplate.update(MARK_DELETE_SQL,
                 userId,
                 filmId);
+
+
 
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
@@ -58,5 +65,6 @@ public class MarksStorage {
     public void deleteAllMarks(int filmId) {
         jdbcTemplate.update(DELETE_ALL_MARKS,
                 filmId);
+
     }
 }
