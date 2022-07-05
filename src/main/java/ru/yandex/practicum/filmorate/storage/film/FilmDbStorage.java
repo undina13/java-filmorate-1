@@ -58,8 +58,7 @@ public class FilmDbStorage implements FilmStorage {
                     "FROM FILM " +
                     "LEFT JOIN MARKS M on FILM.FILM_ID = M.FILM_ID " +
                     "LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID " +
-                    "WHERE DF.DIRECTOR_ID=?  AND RATE > 5" +
-                    "GROUP BY FILM.FILM_ID " +
+                    "WHERE DF.DIRECTOR_ID=?  AND RATE > 5 GROUP BY FILM.FILM_ID " +
                     "ORDER BY FILM.RATE DESC;";
     private final String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_YEARS =
             "SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID " +
@@ -67,14 +66,17 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID " +
                     "WHERE DF.DIRECTOR_ID =? " +
                     "ORDER BY FILM.RELEASE_DATE;";
+    private final String GET_COMMON_FILMS = "SELECT F.film_id FROM FILM AS F JOIN MARKS M on F.FILM_ID = M.FILM_ID WHERE user_id = ? AND F.RATE > 5 INTERSECT SELECT film_id FROM MARKS WHERE user_id = ? ";
+    private final String SEARCH_BY_TITLE = "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like ? ";
+    private final String SEARCH_BY_DIRECTOR = "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID " +
+            "JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like ? ;";
+
+
     private final JdbcTemplate jdbcTemplate;
     private final GenreFilmStorage genreFilmStorage;
     private final MPAADbStorage mpaaDbStorage;
     private final DirectorFilmStorage directorFilmStorage;
-    private final String GET_COMMON_FILMS = "SELECT F.film_id FROM FILM AS F JOIN MARKS M on F.FILM_ID = M.FILM_ID WHERE user_id = ? AND F.RATE > 5 INTERSECT SELECT film_id FROM MARKS WHERE user_id = ? ";
-   private final String SEARCH_BY_TITLE = "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like ? ";
-   private final String SEARCH_BY_DIRECTOR = "SELECT  F.FILM_ID FROM FILM AS F JOIN DIRECTOR_FILM DF on F.FILM_ID = DF.FILM_ID " +
-            "JOIN DIRECTORS D on D.DIRECTOR_ID = DF.DIRECTOR_ID WHERE  LOWER(D.NAME) like ? ";
+
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate,
@@ -289,7 +291,7 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-//TODO ТЕСТЫ!!!!
+//TODO ТЕСТЫ!!!! плюс тесты, что рейтинг меняется при добавлении/изменении/удалении оценок - в отдельном файле
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByMarks(int id) {
         List<Film> films = new ArrayList<>();
