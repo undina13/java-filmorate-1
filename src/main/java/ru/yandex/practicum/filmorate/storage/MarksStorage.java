@@ -37,7 +37,7 @@ public class MarksStorage {
                 filmId,
                 mark);
 
-
+filmDbStorage.updateRateFilm(filmId);
 
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
@@ -52,7 +52,7 @@ public class MarksStorage {
                 userId,
                 filmId);
 
-
+        filmDbStorage.updateRateFilm(filmId);
 
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
@@ -65,6 +65,6 @@ public class MarksStorage {
     public void deleteAllMarks(int filmId) {
         jdbcTemplate.update(DELETE_ALL_MARKS,
                 filmId);
-
+        filmDbStorage.updateRateFilm(filmId);
     }
 }

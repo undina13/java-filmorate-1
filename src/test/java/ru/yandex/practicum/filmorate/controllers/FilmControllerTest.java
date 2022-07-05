@@ -30,22 +30,22 @@ class FilmControllerTest {
 
     @Test
     void findAll() throws Exception {
-        filmStorage.updateRateFilm();
+
         mockMvc.perform(MockMvcRequestBuilders.get("/films"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
                         .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[],\"genres\":" +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
                                 "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
                                 "{\"id\":1,\"name\":\"G\"}}," +
                                 "{\"id\":2,\"name\":\"Фильм2\",\"description\":" +
                                 "\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"marks\":" +
-                                "[{\"user_id\":2,\"film_id\":2,\"mark\":9},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
+                                "[{\"user_id\":2,\"film_id\":2,\"mark\":7},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
                                 "\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"mpa\":{\"id\":4,\"name\": \"R\"}}," +
                                 "{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":2,\"film_id\":3,\"mark\":5}],\"genres\":" +
+                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":1},{\"user_id\":2,\"film_id\":3,\"mark\":5}],\"genres\":" +
                                 "[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"mpa\":" +
                                 "{\"id\":5,\"name\":\"NC-17\"}}]"));
 
@@ -53,7 +53,7 @@ class FilmControllerTest {
 
     @Test
     void findById1() throws Exception {
-        filmStorage.updateRateFilm();
+
         mockMvc.perform(MockMvcRequestBuilders.get("/films/2"))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -61,9 +61,9 @@ class FilmControllerTest {
                 .andExpect(content()
                         .json("{\"id\":2,\"name\":\"Фильм2\",\"description\":" +
                                 "\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120," +
-                                "\"marks\":[{\"user_id\":2,\"film_id\":2,\"mark\":9},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
+                                "\"marks\":[{\"user_id\":2,\"film_id\":2,\"mark\":7},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
                                 "\"genres\":[{\"id\":5,\"name\":\"Документальный\"}]," +
-                                "\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"},\"rate\":9.0}"));
+                                "\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"},\"rate\":8.0}"));
 
     }
 

@@ -193,19 +193,19 @@ public class UserControllerTest {
         ;
     }
 
-    @Test
-    void getRecommendation() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/recommendations"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content()
-                        .json("[{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"" +
-                                ",\"releaseDate\":\"2020-10-13\",\"duration\":120,\"likes\":[2,3],\"genres\":" +
-                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"directors\":" +
-                                "[],\"mpa\":{\"id\":1,\"name\":\"G\"}}]"));
-
-    }
+//    @Test
+//    void getRecommendation() throws Exception {
+//        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/recommendations"))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(content()
+//                        .json("[{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"" +
+//                                ",\"releaseDate\":\"2020-10-13\",\"duration\":120,\"likes\":[2,3],\"genres\":" +
+//                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"directors\":" +
+//                                "[],\"mpa\":{\"id\":1,\"name\":\"G\"}}]"));
+//
+//    }
 
 
 }

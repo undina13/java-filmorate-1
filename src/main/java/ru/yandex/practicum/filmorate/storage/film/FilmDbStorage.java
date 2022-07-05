@@ -149,7 +149,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAll() {
-        updateRateFilm();
+  //      updateRateFilm();
         return jdbcTemplate.queryForStream(
                 FILM_ALL_SQL
                 ,
@@ -159,7 +159,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film get(int id) {
-        updateRateFilm();
+     //   updateRateFilm();
         SqlRowSet filmRows = jdbcTemplate
                 .queryForRowSet(FILM_GET_SQL, id);
         if (filmRows.next()) {
@@ -197,7 +197,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> search(String query, List<String> by) {
-        updateRateFilm();
+  //      updateRateFilm();
         String search = "%" + query.toLowerCase() + "%";
         List<Film> films = new ArrayList<>();
         if (by.containsAll(List.of("director", "title"))) {
@@ -259,9 +259,9 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-    public void updateRateFilm() {
-        String UPDATE_RATE = "UPDATE FILM AS F SET RATE = ((SELECT AVG(MARK) FROM MARKS WHERE MARKS.FILM_ID = F.FILM_ID))  ";
-        jdbcTemplate.update(UPDATE_RATE);
+    public void updateRateFilm(int filmId) {
+        String UPDATE_RATE = "UPDATE FILM AS F SET RATE = ((SELECT AVG(MARK) FROM MARKS WHERE MARKS.FILM_ID = F.FILM_ID)) WHERE F.FILM_ID = ? ";
+        jdbcTemplate.update(UPDATE_RATE, filmId);
     }
 
     private Genre makeGenre(ResultSet gs) throws SQLException {
@@ -318,7 +318,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByYears(int id) {
-        updateRateFilm();
+   //     updateRateFilm();
         List<Film> films = new ArrayList<>();
         SqlRowSet filmsRows = jdbcTemplate.queryForRowSet(FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_YEARS, id);
         while (filmsRows.next()) {
