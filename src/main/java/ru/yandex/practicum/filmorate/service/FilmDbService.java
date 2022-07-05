@@ -66,18 +66,18 @@ public class FilmDbService {
         marksStorage.deleteMark(filmId, userId);
     }
 
-//TODO
-//    public List<Film> getAllFilmsOfDirectorSortedByLikesOrYears(int id, String sortBy) {
-//        directorService.getDirector(id);
-//        if (sortBy.equals("likes")) {
-//            return filmStorage.getAllFilmsOfDirectorSortedByLikes(id);
-//        }
-//        return filmStorage.getAllFilmsOfDirectorSortedByYears(id);
-//    }
 
- //   public List<Film> getCommonFilms(int userId, int friendId) {
-//        return filmStorage.getCommonFilms(userId, friendId);
-//    }
+    public List<Film> getAllFilmsOfDirectorSortedByMarksOrYears(int id, String sortBy) {
+        directorService.getDirector(id);
+        if (sortBy.equals("marks")) {
+            return filmStorage.getAllFilmsOfDirectorSortedByMarks(id);
+        }
+        return filmStorage.getAllFilmsOfDirectorSortedByYears(id);
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
 
     public Collection<Film> search(String query, List<String> by) {
         return filmStorage.search(query, by);

@@ -70,11 +70,11 @@ public class FilmController {
     }
 
 
-//  TODO//  @GetMapping("/director/{directorId}")
-//    public List<Film> getAllFilmsOfDirectorSortedByLikes(@Positive @PathVariable int directorId,
-//                                                         @RequestParam String sortBy) {
-//        return filmDbService.getAllFilmsOfDirectorSortedByLikesOrYears(directorId, sortBy);
-//    }
+    @GetMapping("/director/{directorId}")
+    public List<Film> getAllFilmsOfDirectorSortedByMarks(@Positive @PathVariable int directorId,
+                                                         @RequestParam String sortBy) {
+        return filmDbService.getAllFilmsOfDirectorSortedByMarksOrYears(directorId, sortBy);
+    }
 
 
     @GetMapping("/search")
@@ -82,10 +82,10 @@ public class FilmController {
         return filmDbService.search(query, by);
     }
 
-//    @GetMapping("/common")
-//    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
-//        return filmDbService.getCommonFilms(userId, friendId);
-//    }
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return filmDbService.getCommonFilms(userId, friendId);
+    }
 
     @DeleteMapping("/{id}")
     public void deleteFilm(@PathVariable int id) {

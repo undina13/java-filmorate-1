@@ -16,11 +16,11 @@ public interface FilmStorage {
 
  //TODO   List<Film> getBestFilms(int count, Integer genreId, Integer year);
 
-  // TODO  List<Film> getAllFilmsOfDirectorSortedByLikes(int id);
+    List<Film> getAllFilmsOfDirectorSortedByMarks(int id);
 
     List<Film> getAllFilmsOfDirectorSortedByYears(int id);
 
-   //TODO List<Film> getCommonFilms(int userId, int friendId);
+  List<Film> getCommonFilms(int userId, int friendId);
 
     Collection<Film> search(String query, List<String> by);
 
