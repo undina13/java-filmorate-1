@@ -39,7 +39,7 @@ public class UserDbStorage implements UserStorage {
             "ORDER BY COUNT(FILM_ID) DESC LIMIT 1";
     private final String RECOMMENDATION_FIND_USER1 = "select user_id, count(film_id) FROM MARKS WHERE film_id IN (\n" +
             "SELECT FILM_ID FROM MARKS WHERE USER_ID = ? GROUP BY FILM_ID HAVING ABS(MARK - MARKS.MARK)< 3 ) AND MARKS.USER_ID != ? GROUP BY USER_ID\n" +
-            "ORDER BY COUNT(FILM_ID) DESC LIMIT 1";
+            "ORDER BY COUNT(FILM_ID) DESC LIMIT 3";
 
     private final String RECOMMENDATION_FIND_USER11 = "select M1.user_id, count(M1.film_id) FROM MARKS AS M1 WHERE M1.film_id IN (\n" +
             "SELECT M2.FILM_ID FROM MARKS AS M2 JOIN  MARKS AS M1 ON  M1.user_ID = M2.USER_ID WHERE M1.USER_ID = ? GROUP BY M2.USER_ID HAVING ABS(M1.MARK-M2.MARK) < 3 ) AND M1.USER_ID != ? GROUP BY M1.USER_ID\n" +
@@ -51,8 +51,8 @@ public class UserDbStorage implements UserStorage {
     private final String GET_RECOMMENDATIONS11 = "SELECT * FROM MARKS WHERE FILM_ID in (SELECT FILM_ID FROM MARKS AS M" +
             " WHERE USER_ID = ?  ) AND FILM_ID NOT IN(SELECT FILM_ID FROM MARKS WHERE USER_ID = ?) ";
 
-    private final String GET_RECOMMENDATIONS1 = "SELECT FILM.FILM_ID FROM FILM LEFT JOIN MARKS M2 on FILM.FILM_ID = M2.FILM_ID WHERE M2.FILM_ID in (SELECT FILM_ID FROM MARKS" +
-            " WHERE USER_ID = ?) AND M2.FILM_ID NOT IN(SELECT FILM_ID FROM MARKS WHERE USER_ID = ?) AND FILM.RATE >= 6";
+    private final String GET_RECOMMENDATIONS1 = "SELECT FILM.FILM_ID FROM FILM LEFT JOIN MARKS M2 on FILM.FILM_ID = M2.FILM_ID WHERE FILM.FILM_ID in (SELECT FILM_ID FROM MARKS" +
+            " WHERE USER_ID = ?) AND FILM.FILM_ID NOT IN(SELECT FILM_ID FROM MARKS WHERE USER_ID = ?) AND FILM.RATE >= 6";
 
     private final JdbcTemplate jdbcTemplate;
     private final FilmDbStorage filmDbStorage;
@@ -139,6 +139,7 @@ public class UserDbStorage implements UserStorage {
         while (userRows.next()) {
            userIdList.add(userRows.getInt("user_id"));
         }
+     //   log.error(userIdList.toString());
         if ((userIdList == null) || (userIdList.isEmpty())) {
             return (List<Film>) filmDbStorage.getAll();
             }
@@ -146,7 +147,9 @@ public class UserDbStorage implements UserStorage {
             SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet(GET_RECOMMENDATIONS1, userId, id);
             while (filmIdRows.next()) {
                 int filmId = filmIdRows.getInt("film_id");
+log.error(userId.toString());
                 filmSet.add(filmDbStorage.get(filmId));
+             //   log.error(filmSet.toString());
             }
         }
         return new ArrayList<>(filmSet) ;
