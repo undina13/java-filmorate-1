@@ -215,7 +215,7 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    private Film makeFilm(ResultSet rs) throws SQLException {
+    public Film makeFilm(ResultSet rs) throws SQLException {
         Film film = new Film(
                 rs.getInt("film_id"),
                 rs.getString("name"),
