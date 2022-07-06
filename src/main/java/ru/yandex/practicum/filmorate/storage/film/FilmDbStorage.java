@@ -30,8 +30,19 @@ public class FilmDbStorage implements FilmStorage {
  //   private final String FILM_UPDATE_RATE_SQL = "update FILM set RATE = ?  where FILM_ID = ?";
     private final String FILM_ALL_SQL = "select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id";
     private final String FILM_GET_SQL = "select * from film join mpaa on FILM.MPAA_id = mpaa.mpaa_id where FILM_ID = ?";
-    private final String FILM_POPULAR_SQL = "select * from film LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID WHERE FILM.RATE > 5" +
-            "GROUP BY FILM.FILM_ID,PUBLIC.MARKS.USER_ID ORDER BY FILM.RATE DESC LIMIT ?";
+    private final String FILM_POPULAR_SQL = "select * from film LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID " +
+            "GROUP BY FILM.FILM_ID,M2.USER_ID ORDER BY AVG(M2.MARK) DESC LIMIT ?";
+    private final String FILM_GET_GENRE_SQL ="select * from film LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID " +
+            "LEFT JOIN GENRE_FILM GF on FILM.FILM_ID = GF.FILM_ID  WHERE GF.GENRE_ID=? " +
+            "GROUP BY FILM.FILM_ID,M2.USER_ID ORDER BY AVG(M2.MARK) DESC LIMIT ?";
+    private final String FILM_GET_YEAR_SQL ="select * from film LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID " +
+            "WHERE EXTRACT(YEAR FROM CAST(film.RELEASE_DATE AS DATE)) =? GROUP BY FILM.FILM_ID,M2.USER_ID " +
+            "ORDER BY AVG(M2.MARK) DESC LIMIT ?";
+    private final String FILM_GET_GENRE_AND_YEAR_SQL ="select * from film " +
+            "LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID LEFT JOIN GENRE_FILM GF on FILM.FILM_ID = GF.FILM_ID" +
+            "  WHERE GF.GENRE_ID=? and EXTRACT(YEAR FROM CAST(film.RELEASE_DATE AS DATE))=? GROUP BY M2.USER_ID" +
+            " ORDER BY AVG(M2.MARK) DESC LIMIT ?";
+
     //        private final String FILM_POPULAR_SQL = "select * from film LEFT JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID  " +
     //           "GROUP BY FILM.FILM_ID,PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC LIMIT ?";
 //    private final String FILM_GET_GENRE_SQL = "select * from film LEFT JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID " +
@@ -181,20 +192,22 @@ public class FilmDbStorage implements FilmStorage {
         }
         throw new FilmNotFoundException("Фильмы не найдены");
     }
-//
-//    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
-//        if (genreId == null && year == null) {
-//            return jdbcTemplate.query(FILM_POPULAR_SQL, (rs, rowNum) -> makeFilm(rs), count);
-//        }
-//        if (genreId != null && year == null) {
-//            return jdbcTemplate.query(FILM_GET_GENRE_SQL, (f, rowNum) -> makeFilm(f), genreId, count);
-//        }
-//        if (genreId == null && year != null) {
-//            return jdbcTemplate.query(FILM_GET_YEAR_SQL, (f, rowNum) -> makeFilm(f), year, count);
-//        } else {
-//            return jdbcTemplate.query(FILM_GET_GENRE_AND_YEAR_SQL, (f, rowNum) -> makeFilm(f), genreId, year, count);
-//        }
-//    }
+
+    @Override
+    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
+        if (genreId != null && year != null) {
+            return jdbcTemplate.query(FILM_GET_GENRE_AND_YEAR_SQL, (f, rowNum) -> makeFilm(f),genreId,year, count);
+
+       }
+        if (genreId != null && year == null) {
+            return jdbcTemplate.query(FILM_GET_GENRE_SQL, (f, rowNum) -> makeFilm(f), genreId, count);
+       }
+       if (genreId == null && year != null) {
+            return jdbcTemplate.query(FILM_GET_YEAR_SQL, (f, rowNum) -> makeFilm(f), year, count);
+        } else {
+           return jdbcTemplate.query(FILM_POPULAR_SQL, (rs, rowNum) -> makeFilm(rs), count);
+       }
+    }
 
     @Override
     public Collection<Film> search(String query, List<String> by) {
