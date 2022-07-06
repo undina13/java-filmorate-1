@@ -18,11 +18,10 @@ public class MarksStorage {
 
     private final String MARK_INSERT_SQL = "insert into MARKS(USER_ID, FILM_ID, MARK)  values (?, ?, ?)";
     private final String MARK_DELETE_SQL = "delete from MARKS where USER_ID = ? and  FILM_ID = ?";
-    String DELETE_ALL_MARKS = "delete from MARKS where FILM_ID = ? ";
-
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
-    private  final FilmDbStorage filmDbStorage;
+    private final FilmDbStorage filmDbStorage;
+    String DELETE_ALL_MARKS = "delete from MARKS where FILM_ID = ? ";
 
     @Autowired
     public MarksStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage, FilmDbStorage filmDbStorage) {
@@ -36,9 +35,7 @@ public class MarksStorage {
                 userId,
                 filmId,
                 mark);
-
-filmDbStorage.updateRateFilm(filmId);
-
+        filmDbStorage.updateRateFilm(filmId);
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                 userId,
@@ -51,9 +48,7 @@ filmDbStorage.updateRateFilm(filmId);
         jdbcTemplate.update(MARK_DELETE_SQL,
                 userId,
                 filmId);
-
         filmDbStorage.updateRateFilm(filmId);
-
         eventStorage.createEvent(new Event(0,
                 LocalDateTime.now().toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli(),
                 userId,

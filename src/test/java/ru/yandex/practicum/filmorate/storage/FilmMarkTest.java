@@ -35,6 +35,7 @@ public class FilmMarkTest {
     @Test
     @DirtiesContext
     public void updateMarkToLower() throws Exception {
+        //при добавлении маленькой оценки рейтинг фильма падает
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/films/1/mark/1/1"))
                 .andExpect(status().isOk());
@@ -48,6 +49,27 @@ public class FilmMarkTest {
                                 "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10},{\"user_id\":1,\"film_id\":1,\"mark\":1}],\"genres\":" +
                                 "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
                                 "{\"id\":1,\"name\":\"G\"},\"rate\":5.5}  "));
+    }
+
+    @Test
+    @DirtiesContext
+    public void updateRateAfterDeleteMark() throws Exception {
+        //при удалении оценки рейтинг пересчитывается
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/films/2/mark/2"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/2"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("{\"id\":2,\"name\":\"Фильм2\",\"description\":" +
+                                "\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120," +
+                                "\"marks\":[{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
+                                "\"genres\":[{\"id\":5,\"name\":\"Документальный\"}]," +
+                                "\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"},\"rate\":9.0}"));
+
     }
 
 }
