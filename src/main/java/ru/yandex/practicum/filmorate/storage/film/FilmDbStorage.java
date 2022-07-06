@@ -309,6 +309,7 @@ public class FilmDbStorage implements FilmStorage {
                     filmsRows.getDouble("rate"));
             film.setGenres(setGenre(film).getGenres());
             film.setDirectors(setDirector(film).getDirectors());
+            setMarks(film);
             films.add(film);
         }
         return films;

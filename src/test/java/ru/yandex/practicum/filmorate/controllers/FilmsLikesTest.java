@@ -42,7 +42,7 @@ public class FilmsLikesTest {
                         MockMvcRequestBuilders.put("/films/1/mark/1/6"))
                 .andExpect(status().isOk());
 
-        Assertions.assertEquals(filmDbService.get(1).getMarks(), Set.of(new Mark(1,1,6)));
+        Assertions.assertEquals(filmDbService.get(1).getMarks(), Set.of(new Mark(3,1,10), new Mark(1,1,6)));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class FilmsLikesTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.delete("/films/1/mark/1"))
                 .andExpect(status().isOk());
-        Assertions.assertNull(filmDbService.get(1).getMarks());
+        Assertions.assertEquals(filmDbService.get(1).getMarks(), Set.of( new Mark(3, 1,10)));
     }
 
     @Test

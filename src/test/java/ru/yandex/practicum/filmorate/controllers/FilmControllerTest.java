@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
@@ -45,7 +46,7 @@ class FilmControllerTest {
                                 "[{\"user_id\":2,\"film_id\":2,\"mark\":7},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
                                 "\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"mpa\":{\"id\":4,\"name\": \"R\"}}," +
                                 "{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":1},{\"user_id\":2,\"film_id\":3,\"mark\":5}],\"genres\":" +
+                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":4},{\"user_id\":2,\"film_id\":3,\"mark\":5}],\"genres\":" +
                                 "[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"mpa\":" +
                                 "{\"id\":5,\"name\":\"NC-17\"}}]"));
 
@@ -224,4 +225,41 @@ class FilmControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/films/5")).andExpect(status().isNotFound());
     }
+
+    @Test
+    void getAllFilmsOfDirectorSortedByMarks() throws Exception {
+//отдает одно значение, у фильма 3 маленький рейтинг
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/director/1?sortBy=marks"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
+                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
+                                "{\"id\":1,\"name\":\"G\"},\"rate\":10.0}]"));
+    }
+
+//    @Test
+//    @DirtiesContext
+//    void getAllFilmsOfDirectorSortedByMarksAddMark() throws Exception {
+//// увеличили рейтинг фильма 3, выдает 2 значения сортирует по рейтингу
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.put("/films/3/mark/1/10"))
+//                .andExpect(status().isOk());
+//
+//        mockMvc.perform(MockMvcRequestBuilders.get("/films/director/1?sortBy=marks"))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(content()
+//                        .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
+//                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
+//                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
+//                                "{\"id\":1,\"name\":\"G\"},\"rate\":10.0}," +
+//                                "{\"id\":3,\"name\":\"�����3\",\"description\":\"�����-�� ��������\"," +
+//                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":4}," +
+//                                "{\"user_id\":1,\"film_id\":3,\"mark\":10},{\"user_id\":2,\"film_id\":3,\"mark\":5}]," +
+//                                "\"genres\":[{\"id\":2,\"name\":\"�����\"},{\"id\":4,\"name\":\"�������\"}],\"directors\":[{\"id\":1,\"name\":\"��������1\"}],\"mpa\":{\"id\":5,\"name\":\"NC-17\"},\"rate\":6.333333333333333}]"));
+//    }
 }
