@@ -27,7 +27,7 @@ public class FilmDbStorage implements FilmStorage {
             "values(?, ?, ?, ?, ?, ?)";
     private final String FILM_UPDATE_SQL = "update FILM set NAME = ?, DESCRIPTION = ?,RELEASE_DATE = ?, DURATION = ?," +
             " MPAA_ID = ?   where FILM_ID = ?";
-    private final String FILM_UPDATE_RATE_SQL = "update FILM set RATE = ?  where FILM_ID = ?";
+ //   private final String FILM_UPDATE_RATE_SQL = "update FILM set RATE = ?  where FILM_ID = ?";
     private final String FILM_ALL_SQL = "select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id";
     private final String FILM_GET_SQL = "select * from film join mpaa on FILM.MPAA_id = mpaa.mpaa_id where FILM_ID = ?";
     private final String FILM_POPULAR_SQL = "select * from film LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID WHERE FILM.RATE > 5" +
@@ -53,7 +53,7 @@ public class FilmDbStorage implements FilmStorage {
             "from DIRECTORS AS d  " +
             "join director_film AS df on d.director_id = df.director_id  " +
             "where  df.film_id = ? ORDER BY d.director_id ";
-        private final String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_MARKS =
+    private final String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_MARKS =
             "SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID, FILM.RATE " +
                     "FROM FILM " +
                     "LEFT JOIN MARKS M on FILM.FILM_ID = M.FILM_ID " +
@@ -61,10 +61,11 @@ public class FilmDbStorage implements FilmStorage {
                     "WHERE DF.DIRECTOR_ID=?  AND RATE > 5 GROUP BY FILM.FILM_ID " +
                     "ORDER BY FILM.RATE DESC;";
     private final String FILMS_SELECT_ALL_OF_DIRECTOR_SORTED_BY_YEARS =
-            "SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID " +
+            "SELECT FILM.FILM_ID, FILM.NAME, FILM.DESCRIPTION, FILM.RELEASE_DATE, FILM.DURATION, FILM.MPAA_ID, FILM.RATE " +
                     "FROM FILM " +
                     "LEFT JOIN DIRECTOR_FILM DF on FILM.FILM_ID = DF.FILM_ID " +
-                    "WHERE DF.DIRECTOR_ID =? " +
+                    "LEFT JOIN MARKS M on FILM.FILM_ID = M.FILM_ID " +
+                    "WHERE DF.DIRECTOR_ID =? AND RATE > 5 GROUP BY FILM.FILM_ID " +
                     "ORDER BY FILM.RELEASE_DATE;";
     private final String GET_COMMON_FILMS = "SELECT F.film_id FROM FILM AS F JOIN MARKS M on F.FILM_ID = M.FILM_ID WHERE user_id = ? AND F.RATE > 5 INTERSECT SELECT film_id FROM MARKS WHERE user_id = ? ";
     private final String SEARCH_BY_TITLE = "SELECT FILM_ID  FROM FILM  WHERE LOWER(NAME)  like ? ";
@@ -159,7 +160,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film get(int id) {
-     //   updateRateFilm();
+        //   updateRateFilm();
         SqlRowSet filmRows = jdbcTemplate
                 .queryForRowSet(FILM_GET_SQL, id);
         if (filmRows.next()) {
@@ -291,7 +292,6 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-//TODO ТЕСТЫ!!!! плюс тесты, что рейтинг меняется при добавлении/изменении/удалении оценок - в отдельном файле
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByMarks(int id) {
         List<Film> films = new ArrayList<>();
@@ -315,7 +315,6 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    //TODO ТЕСТЫ!!!!
     @Override
     public List<Film> getAllFilmsOfDirectorSortedByYears(int id) {
         List<Film> films = new ArrayList<>();
@@ -330,7 +329,7 @@ public class FilmDbStorage implements FilmStorage {
                     new MPAA(filmsRows.getInt("mpaa_id"),
                             mpaaDbStorage.getById(filmsRows.getInt("mpaa_id")).getName()
                     ),
-            filmsRows.getDouble("rate"));
+                    filmsRows.getDouble("rate"));
             film.setGenres(setGenre(film).getGenres());
             film.setDirectors(setDirector(film).getDirectors());
             setMarks(film);
@@ -341,7 +340,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
-   public List<Film> getCommonFilms(int userId, int friendId) {
+    public List<Film> getCommonFilms(int userId, int friendId) {
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(GET_COMMON_FILMS, userId, friendId);
         List<Film> commonFilms = new ArrayList<>();
 
