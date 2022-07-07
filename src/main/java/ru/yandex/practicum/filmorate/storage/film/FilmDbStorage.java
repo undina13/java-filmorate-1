@@ -27,7 +27,6 @@ public class FilmDbStorage implements FilmStorage {
             "values(?, ?, ?, ?, ?, ?)";
     private final String FILM_UPDATE_SQL = "update FILM set NAME = ?, DESCRIPTION = ?,RELEASE_DATE = ?, DURATION = ?," +
             " MPAA_ID = ?   where FILM_ID = ?";
- //   private final String FILM_UPDATE_RATE_SQL = "update FILM set RATE = ?  where FILM_ID = ?";
     private final String FILM_ALL_SQL = "select * from film  join mpaa on film.mpaa_id = mpaa.mpaa_id";
     private final String FILM_GET_SQL = "select * from film join mpaa on FILM.MPAA_id = mpaa.mpaa_id where FILM_ID = ?";
     private final String FILM_POPULAR_SQL = "select * from film LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID " +
@@ -42,20 +41,6 @@ public class FilmDbStorage implements FilmStorage {
             "LEFT JOIN  MARKS M2 on FILM.FILM_ID = M2.FILM_ID LEFT JOIN GENRE_FILM GF on FILM.FILM_ID = GF.FILM_ID" +
             "  WHERE GF.GENRE_ID=? and EXTRACT(YEAR FROM CAST(film.RELEASE_DATE AS DATE))=? GROUP BY M2.USER_ID" +
             " ORDER BY AVG(M2.MARK) DESC LIMIT ?";
-
-    //        private final String FILM_POPULAR_SQL = "select * from film LEFT JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID  " +
-    //           "GROUP BY FILM.FILM_ID,PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC LIMIT ?";
-//    private final String FILM_GET_GENRE_SQL = "select * from film LEFT JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID " +
-//            "LEFT JOIN GENRE_FILM GF on FILM.FILM_ID = GF.FILM_ID " + "WHERE GF.GENRE_ID=?" +
-//            "GROUP BY FILM.FILM_ID,PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC LIMIT ?";
-//    private final String FILM_GET_YEAR_SQL = "select * from film LEFT JOIN  LIKES  on film.FILM_ID  = lIKES.FILM_ID " +
-//            "WHERE EXTRACT(YEAR FROM CAST(film.RELEASE_DATE AS DATE)) =?" +
-//            "GROUP BY FILM.FILM_ID,PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC LIMIT ?";
-//    private final String FILM_GET_GENRE_AND_YEAR_SQL = "select * from film LEFT JOIN  LIKES  on" +
-//            " film.FILM_ID  = lIKES.FILM_ID " +
-//            "LEFT JOIN GENRE_FILM GF on FILM.FILM_ID = GF.FILM_ID " +
-//            "WHERE GF.GENRE_ID=? and EXTRACT(YEAR FROM CAST(film.RELEASE_DATE AS DATE)) =?" +
-//            "GROUP BY FILM.FILM_ID,PUBLIC.LIKES.USER_ID ORDER BY COUNT(LIKES.USER_ID) DESC LIMIT ?";
     private final String FILM_SET_GENRE_SQL = "select G.GENRE_ID, G.NAME from GENRE AS G  join GENRE_FILM GF on" +
             " G.GENRE_ID = GF.GENRE_ID  where  GF.FILM_ID = ? ORDER BY G.GENRE_ID ";
     private final String FILM_SET_MARKS_SQL = "select * from MARKS  where  FILM_ID =?";

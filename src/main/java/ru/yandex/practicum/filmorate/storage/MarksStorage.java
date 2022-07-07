@@ -21,7 +21,7 @@ public class MarksStorage {
     private final JdbcTemplate jdbcTemplate;
     private final EventStorage eventStorage;
     private final FilmDbStorage filmDbStorage;
-    String DELETE_ALL_MARKS = "delete from MARKS where FILM_ID = ? ";
+
 
     @Autowired
     public MarksStorage(JdbcTemplate jdbcTemplate, EventStorage eventStorage, FilmDbStorage filmDbStorage) {
@@ -57,9 +57,5 @@ public class MarksStorage {
                 filmId));
     }
 
-    public void deleteAllMarks(int filmId) {
-        jdbcTemplate.update(DELETE_ALL_MARKS,
-                filmId);
-        filmDbStorage.updateRateFilm(filmId);
-    }
+
 }

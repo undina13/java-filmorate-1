@@ -46,7 +46,9 @@ public class FilmMarkTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
                         .json("{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10},{\"user_id\":1,\"film_id\":1,\"mark\":1}],\"genres\":" +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":" +
+                                "[{\"user_id\":3,\"film_id\":1,\"mark\":10},{\"user_id\":1,\"film_id\":1,\"mark\":1}]," +
+                                "\"genres\":" +
                                 "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
                                 "{\"id\":1,\"name\":\"G\"},\"rate\":5.5}  "));
     }

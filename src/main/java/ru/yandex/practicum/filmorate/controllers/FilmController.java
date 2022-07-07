@@ -36,12 +36,12 @@ public class FilmController {
         return filmDbService.get(id);
     }
 
-//    @GetMapping("/popular")
-//    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count,
-//                                 @RequestParam(required = false) Integer genreId,
-//                                 @RequestParam(required = false) Integer year) {
-//        return filmDbService.getBestFilms(count, genreId, year);
-//    }
+    @GetMapping("/popular")
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count,
+                                 @RequestParam(required = false) Integer genreId,
+                                 @RequestParam(required = false) Integer year) {
+        return filmDbService.getBestFilms(count, genreId, year);
+    }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {

@@ -36,9 +36,9 @@ public class FilmDbService {
         return filmStorage.get(id);
     }
 
-//    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
-//        return filmStorage.getBestFilms(count, genreId, year);
-//    }
+    public List<Film> getBestFilms(int count, Integer genreId, Integer year) {
+        return filmStorage.getBestFilms(count, genreId, year);
+    }
 
     public Film create(Film film) {
         return filmStorage.create(film);
