@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.yandex.practicum.filmorate.model.Mark;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
 import ru.yandex.practicum.filmorate.service.UserDBService;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
@@ -17,6 +20,8 @@ import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.util.Set;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -26,30 +31,50 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FilmsLikesTest {
     @Autowired
     FilmDbService filmDbService;
-    @Autowired
-    FilmDbStorage filmStorage;
-    @Autowired
-    UserDbStorage userStorage;
-    @Autowired
-    UserDBService userService;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     @DirtiesContext
-    public void putLikeAllOk() throws Exception {
+    public void putMarkAllOk() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/films/1/like/1"))
+                        MockMvcRequestBuilders.put("/films/1/mark/1/6"))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(1, 2, 3));
+
+        Assertions.assertEquals(filmDbService.get(1).getMarks(), Set.of(new Mark(3,1,10), new Mark(1,1,6)));
     }
 
     @Test
-    @DirtiesContext
-    public void deleteLikeAllOk() throws Exception {
+    public void putTooBigMark() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.delete("/films/2/like/1"))
+                MockMvcRequestBuilders.put("/films/1/mark/1/60"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void putTooSmallMark() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/films/1/mark/1/-5"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void deleteMarkAllOk() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/films/1/mark/1/6"))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(filmDbService.get(1).getLikes(), Set.of(2, 3));
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/films/1/mark/1"))
+                .andExpect(status().isOk());
+        Assertions.assertEquals(filmDbService.get(1).getMarks(), Set.of( new Mark(3, 1,10)));
+    }
+
+    @Test
+    public void deleteMarkNotFound() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/films/1/mark/15"))
+                .andExpect(status().isInternalServerError());
+
     }
 }

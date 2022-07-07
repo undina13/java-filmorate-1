@@ -24,22 +24,26 @@ class FilmDbStorageTest {
     void getBestFilms() {
         List<Film> filmList = filmDbStorage.getBestFilms(10, null, null);
 
-        assertEquals(filmList.size(), 6, "Количество обзоров не совпало");
+        assertEquals(filmList.size(), 9, "Количество фильмов не совпало");
 
         filmList = filmDbStorage.getBestFilms(1, null, null);
 
-        assertEquals(filmList.size(), 1, "Количество обзоров не совпало");
+        assertEquals(filmList.size(), 1, "Количество фильмов не совпало");
+
+        filmList = filmDbStorage.getBestFilms(10, 5, null);
+
+        assertEquals(filmList.size(), 2, "Количество фильмов не совпало");
 
         filmList = filmDbStorage.getBestFilms(10, null, 2010);
 
-        assertEquals(filmList.size(), 0, "Количество обзоров не совпало");
+        assertEquals(filmList.size(), 0, "Количество фильмов не совпало");
 
         filmList = filmDbStorage.getBestFilms(10, null, 2022);
 
-        assertEquals(filmList.size(), 4, "Количество обзоров не совпало");
+        assertEquals(filmList.size(), 6, "Количество фильмов не совпало");
 
-        filmList = filmDbStorage.getBestFilms(10, 5, 22);
+         filmList = filmDbStorage.getBestFilms(10, 3, 2022);
 
-        assertEquals(filmList.size(), 0, "Количество обзоров не совпало");
+        assertEquals(filmList.size(), 1, "Количество фильмов не совпало");
     }
 }

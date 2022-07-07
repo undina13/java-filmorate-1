@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
@@ -30,36 +31,67 @@ class FilmControllerTest {
 
     @Test
     void findAll() throws Exception {
+
         mockMvc.perform(MockMvcRequestBuilders.get("/films"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
                         .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"likes\":[2,3],\"genres\":" +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
                                 "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
-                                "{\"id\":1,\"name\":\"G\"}},{\"id\":2,\"name\":\"Фильм2\",\"description\":" +
-                                "\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":" +
-                                "[1,2],\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"mpa\":{\"id\":4,\"name\":" +
-                                "\"R\"}},{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"likes\":[1,2],\"genres\":" +
+                                "{\"id\":1,\"name\":\"G\"}}," +
+                                "{\"id\":2,\"name\":\"Фильм2\",\"description\":" +
+                                "\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120,\"marks\":" +
+                                "[{\"user_id\":2,\"film_id\":2,\"mark\":7},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
+                                "\"genres\":[{\"id\":5,\"name\":\"Документальный\"}],\"mpa\":{\"id\":4,\"name\": \"R\"}}," +
+                                "{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":4},{\"user_id\":2,\"film_id\":3,\"mark\":5}],\"genres\":" +
                                 "[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"mpa\":" +
-                                "{\"id\":5,\"name\":\"NC-17\"}}]"));
+                                "{\"id\":5,\"name\":\"NC-17\"}}," +
+                                "{\"id\":4,\"name\":\"Фильм4\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":2,\"film_id\":4,\"mark\":8}," +
+                                "{\"user_id\":1,\"film_id\":4,\"mark\":7}],\"genres\":null," +
+                                "\"directors\":[],\"mpa\":{\"id\":1,\"name\":\"G\"},\"rate\":7.5}," +
+                                " {\"id\":5,\"name\":\"Фильм5\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-01-16\",\"duration\":120," +
+                                "\"marks\":[{\"user_id\":3,\"film_id\":5,\"mark\":8}],\"genres\":null,\"directors\":[]," +
+                                "\"mpa\":{\"id\":4,\"name\":\"R\"},\"rate\":8.0}," +
+                                "{\"id\":6,\"name\":\"Фильм6\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":" +
+                                "[{\"user_id\":2,\"film_id\":6,\"mark\":10}],\"genres\":null,\"directors\":[]," +
+                                "\"mpa\":{\"id\":5,\"name\":\"NC-17\"},\"rate\":10.0} ]"));
     }
 
     @Test
-    void createAllOk() throws Exception {
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post("/films")
-                                .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\"" +
-                                        ":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+    void findById1() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/2"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
-                        .json("{\"id\":4,\"name\":\"New film\",\"description\":\"Some description\"," +
-                                "\"releaseDate\":\"2020-10-13\",\"duration\":120,\"likes\":null,\"genres\":null," +
+                        .json("{\"id\":2,\"name\":\"Фильм2\",\"description\":" +
+                                "\"какое-то описание\",\"releaseDate\":\"2022-01-16\",\"duration\":120," +
+                                "\"marks\":[{\"user_id\":2,\"film_id\":2,\"mark\":7},{\"user_id\":1,\"film_id\":2,\"mark\":9}]," +
+                                "\"genres\":[{\"id\":5,\"name\":\"Документальный\"}]," +
+                                "\"directors\":[{\"id\":2,\"name\":\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"},\"rate\":8.0}"));
+
+    }
+
+    @Test
+    @DirtiesContext
+    void createAllOk() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/films")
+                        .content("{\"name\":\"New film\",\"description\":\"Some description\",\"releaseDate\"" +
+                                ":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("{\"id\":7,\"name\":\"New film\",\"description\":\"Some description\"," +
+                                "\"releaseDate\":\"2020-10-13\",\"duration\":120,\"marks\":null,\"genres\":null," +
                                 "\"mpa\":{\"id\":1,\"name\":\"G\"}}"));
         filmStorage.deleteFilm(4);
     }
@@ -67,22 +99,22 @@ class FilmControllerTest {
     @Test
     void createBadData() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/films")
-                                .content("{\"name\":\"New film\",\"description\":\"Some description\"," +
-                                        "\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\"" +
-                                        ":1,\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.post("/films")
+                        .content("{\"name\":\"New film\",\"description\":\"Some description\"," +
+                                "\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\"" +
+                                ":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void createEmptyName() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/films")
-                                .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\"," +
-                                        "\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1," +
-                                        "\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.post("/films")
+                        .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\"," +
+                                "\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1," +
+                                "\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -90,15 +122,15 @@ class FilmControllerTest {
     @Test
     void createTooLongDescription() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/films")
-                                .content("{\"id\":1,\"name\":\"New film\",\"description\":" +
-                                        "\"Some long descriptionfffffffffffffffffffffffffffffffffffff" +
-                                        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                                        "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                                        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                                        "fffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\"" +
-                                        ":{\"id\":1,\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.post("/films")
+                        .content("{\"id\":1,\"name\":\"New film\",\"description\":" +
+                                "\"Some long descriptionfffffffffffffffffffffffffffffffffffff" +
+                                "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
+                                "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
+                                "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
+                                "fffffffffff\",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\"" +
+                                ":{\"id\":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -106,18 +138,19 @@ class FilmControllerTest {
     @Test
     void putAllOk() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/films")
-                                .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"" +
-                                        ",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"likes\":[3]," +
-                                        "\"genres\":[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":" +
-                                        "\"Мультфильм\"}],\"mpa\":{\"id\":1,\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.put("/films")
+                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"" +
+                                ",\"releaseDate\":\"2020-10-13\",\"duration\":\"120\"," +
+                                "\"genres\":[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":" +
+                                "\"Мультфильм\"}],\"mpa\":{\"id\":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
                         .json("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"," +
-                                "\"releaseDate\":\"2020-10-13\",\"duration\":120,\"likes\":[3],\"genres\":" +
+                                "\"releaseDate\":\"2020-10-13\",\"duration\":120," +
+                                "\"genres\":" +
                                 "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
                                 "{\"id\":1,\"name\":\"G\"}}"));
     }
@@ -125,11 +158,11 @@ class FilmControllerTest {
     @Test
     void putBadData() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/films")
-                                .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"," +
-                                        "\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1," +
-                                        "\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.put("/films")
+                        .content("{\"id\":1,\"name\":\"New film\",\"description\":\"Some description\"," +
+                                "\"releaseDate\":\"1891-10-13\",\"duration\":\"120\",\"mpa\":{\"id\":1," +
+                                "\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -137,11 +170,11 @@ class FilmControllerTest {
     @Test
     void putEmptyName() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/films")
-                                .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\"," +
-                                        "\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\"" +
-                                        ":1,\"name\":\"G\"}}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.put("/films")
+                        .content("{\"id\":1,\"name\":\"\",\"description\":\"Some description\"," +
+                                "\"releaseDate\":\"2020-10-13\",\"duration\":\"120\",\"mpa\":{\"id\"" +
+                                ":1,\"name\":\"G\"}}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
     }
@@ -149,16 +182,27 @@ class FilmControllerTest {
     @Test
     void putTooLongDescription() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/films")
-                                .content("{\"id\":1,\"name\":\"New film\",\"description\":" +
-                                        "\"Some long descriptionffffffffffffffffffffffffffffffffffffffffffff" +
-                                        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                                        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
-                                        "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"," +
-                                        "\"releaseDate\":\"2020-10-13\",\"duration\":\"120\"}")
-                                .contentType(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.put("/films")
+                        .content("{\"id\":1,\"name\":\"New film\",\"description\":" +
+                                "\"Some long descriptionffffffffffffffffffffffffffffffffffffffffffff" +
+                                "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
+                                "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" +
+                                "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"," +
+                                "\"releaseDate\":\"2020-10-13\",\"duration\":\"120\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
         ;
+    }
+
+    @Test
+    void getCommonFilmsEmpty() throws Exception {
+        //не найдет ничего, единственный общий фильм с рейтингом 4
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/common?userId=3&friendId=2"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[]"));
     }
 
     @Test
@@ -169,15 +213,16 @@ class FilmControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content()
                         .json("[{\"id\":2,\"name\":\"Фильм2\",\"description\":\"какое-то описание\"," +
-                                "\"releaseDate\":\"2022-01-16\",\"duration\":120,\"likes\":[1,2],\"genres\":" +
-                                "[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[{\"id\":2,\"name\":" +
-                                "\"фильм1\"}],\"mpa\":{\"id\":4,\"name\":\"R\"}}, {\"id\":3,\"name\":\"Фильм3\"," +
-                                "\"description\":\"какое-то описание\",\"releaseDate\":\"2020-08-16\",\"duration\":" +
-                                "120,\"likes\":[1,2],\"genres\":[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"" +
-                                "Триллер\"}],\"directors\":[],\"mpa\":{\"id\":5,\"name\":\"NC-17\"}}]"));
-
+                                "\"releaseDate\":\"2022-01-16\",\"duration\":120,\"marks\":[{\"user_id\":2," +
+                                "\"film_id\":2,\"mark\":7},{\"user_id\":1,\"film_id\":2,\"mark\":9}],\"genres\":" +
+                                "[{\"id\":5,\"name\":\"Документальный\"}],\"directors\":[{\"id\":2,\"name\":\"фильм1\"}]" +
+                                ",\"mpa\":{\"id\":4,\"name\":\"R\"},\"rate\":8.0}," +
+                                "{\"id\":4,\"name\":\"Фильм4\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":2,\"film_id\":4,\"mark\":8}," +
+                                "{\"user_id\":1,\"film_id\":4,\"mark\":7}],\"genres\":null," +
+                                "\"directors\":[],\"mpa\":{\"id\":1,\"name\":\"G\"},\"rate\":7.5}" +
+                                "]"));
     }
-
 
     @Test
     void deleteFilm() throws Exception {
@@ -193,4 +238,77 @@ class FilmControllerTest {
                 MockMvcRequestBuilders.get("/films/5")).andExpect(status().isNotFound());
     }
 
+    @Test
+    void getAllFilmsOfDirectorSortedByMarks() throws Exception {
+//отдает одно значение, у фильма 3 маленький рейтинг
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/director/1?sortBy=marks"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
+                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
+                                "{\"id\":1,\"name\":\"G\"},\"rate\":10.0}]"));
+    }
+
+    @Test
+    @DirtiesContext
+    void getAllFilmsOfDirectorSortedByMarksAddMark() throws Exception {
+// увеличили рейтинг фильма 3, выдает 2 значения сортирует по рейтингу
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/films/3/mark/1/10"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/director/1?sortBy=marks"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
+                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
+                                "{\"id\":1,\"name\":\"G\"},\"rate\":10.0}," +
+                                "{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":4}," +
+                                "{\"user_id\":1,\"film_id\":3,\"mark\":10},{\"user_id\":2,\"film_id\":3,\"mark\":5}]," +
+                                "\"genres\":[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"directors\":[{\"id\":1,\"name\":\"Режиссер1\"}],\"mpa\":{\"id\":5,\"name\":\"NC-17\"},\"rate\":6.333333333333333}]"));
+    }
+
+    @Test
+    void getAllFilmsOfDirectorSortedByYear() throws Exception {
+//отдает одно значение, у фильма 3 маленький рейтинг
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/director/1?sortBy=year"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
+                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
+                                "{\"id\":1,\"name\":\"G\"},\"rate\":10.0}]"));
+    }
+
+    @Test
+    @DirtiesContext
+    void getAllFilmsOfDirectorSortedByYearAddMark() throws Exception {
+// увеличили рейтинг фильма 3, выдает 2 значения сортирует по рейтингу
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/films/3/mark/1/10"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/films/director/1?sortBy=year"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .json("[{\"id\":1,\"name\":\"Фильм1\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2022-03-15\",\"duration\":180,\"marks\":[{\"user_id\":3,\"film_id\":1,\"mark\":10}],\"genres\":" +
+                                "[{\"id\":1,\"name\":\"Комедия\"},{\"id\":3,\"name\":\"Мультфильм\"}],\"mpa\":" +
+                                "{\"id\":1,\"name\":\"G\"},\"rate\":10.0}," +
+                                "{\"id\":3,\"name\":\"Фильм3\",\"description\":\"какое-то описание\"," +
+                                "\"releaseDate\":\"2020-08-16\",\"duration\":120,\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":4}," +
+                                "{\"user_id\":1,\"film_id\":3,\"mark\":10},{\"user_id\":2,\"film_id\":3,\"mark\":5}]," +
+                                "\"genres\":[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}],\"directors\":[{\"id\":1,\"name\":\"Режиссер1\"}],\"mpa\":{\"id\":5,\"name\":\"NC-17\"},\"rate\":6.333333333333333}]"));
+    }
 }

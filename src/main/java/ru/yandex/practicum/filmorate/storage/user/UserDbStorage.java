@@ -16,10 +16,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -37,11 +34,11 @@ public class UserDbStorage implements UserStorage {
     private final String USER_SET_FRIENDS_SQL = "SELECT USER_ID From USERS where USER_ID IN " +
             "(SELECT FRIEND_ID FROM FRIENDS where USER_ID =?)";
     private final String USER_DELETE_SQL = "delete from USERS where USER_ID = ? ";
-    private final String RECOMMENDATION_FIND_USER = "select user_id, count(film_id) FROM LIKES WHERE film_id IN (\n" +
-            "SELECT FILM_ID FROM LIKES WHERE USER_ID = ?) AND LIKES.USER_ID != ? GROUP BY USER_ID\n" +
-            "ORDER BY COUNT(FILM_ID) DESC LIMIT 1";
-    private final String GET_RECOMMENDATIONS = "SELECT * FROM LIKES WHERE FILM_ID in (SELECT FILM_ID FROM LIKEs" +
-            " WHERE USER_ID = ?) AND FILM_ID NOT IN(SELECT FILM_ID FROM LIKEs WHERE USER_ID = ?)";
+    private final String RECOMMENDATION_FIND_USER1 = "select user_id, count(film_id) FROM MARKS WHERE film_id IN (\n" +
+            "SELECT FILM_ID FROM MARKS WHERE USER_ID = ? GROUP BY FILM_ID HAVING ABS(MARK - MARKS.MARK)< 3 ) AND MARKS.USER_ID != ? GROUP BY USER_ID\n" +
+            "ORDER BY COUNT(FILM_ID) DESC LIMIT 3";
+    private final String GET_RECOMMENDATIONS1 = "SELECT FILM.FILM_ID FROM FILM LEFT JOIN MARKS M2 on FILM.FILM_ID = M2.FILM_ID WHERE FILM.FILM_ID in (SELECT FILM_ID FROM MARKS" +
+            " WHERE USER_ID = ?) AND FILM.FILM_ID NOT IN(SELECT FILM_ID FROM MARKS WHERE USER_ID = ?) AND FILM.RATE >= 6";
 
     private final JdbcTemplate jdbcTemplate;
     private final FilmDbStorage filmDbStorage;
@@ -121,20 +118,25 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<Film> getRecommendations(int id) {
-        List<Film> films = new ArrayList<>();
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(RECOMMENDATION_FIND_USER, id, id);
-        Integer userNewId = null;
-        if (userRows.next()) {
-            userNewId = userRows.getInt("user_id");
+        Set<Film> filmSet = new HashSet<>();
+
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(RECOMMENDATION_FIND_USER1, id, id);
+        List<Integer> userIdList = new ArrayList<>();
+        while (userRows.next()) {
+            userIdList.add(userRows.getInt("user_id"));
         }
-        if (userNewId != null) {
-            SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet(GET_RECOMMENDATIONS, userNewId, id);
-            if (filmIdRows.next()) {
+        if ((userIdList == null) || (userIdList.isEmpty())) {
+            return (List<Film>) filmDbStorage.getAll();
+        }
+        for (Integer userId : userIdList) {
+            SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet(GET_RECOMMENDATIONS1, userId, id);
+            while (filmIdRows.next()) {
                 int filmId = filmIdRows.getInt("film_id");
-                films.add(filmDbStorage.get(filmId));
+                log.error(userId.toString());
+                filmSet.add(filmDbStorage.get(filmId));
             }
         }
-        return films;
+        return new ArrayList<>(filmSet);
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
