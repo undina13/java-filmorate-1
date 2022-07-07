@@ -47,7 +47,7 @@ public class FilmSearchTest {
                                 "\"releaseDate\":\"2020-08-16\",\"duration\":120," +
                                 "\"marks\":[{\"user_id\":3,\"film_id\":3,\"mark\":4},{\"user_id\":2,\"film_id\":3,\"mark\":5}]," +
                                 "\"genres\":[{\"id\":2,\"name\":\"Драма\"},{\"id\":4,\"name\":\"Триллер\"}]," +
-                                "\"directors\":[{\"id\":1,\"name\":\"Режиссер1\"}],\"mpa\":{\"id\":5,\"name\":\"NC-17\"},\"rate\":4.0}]]"));
+                                "\"directors\":[{\"id\":1,\"name\":\"Режиссер1\"}],\"mpa\":{\"id\":5,\"name\":\"NC-17\"},\"rate\":4.5}]]"));
     }
 
     @Test
