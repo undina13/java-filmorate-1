@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
@@ -36,8 +36,8 @@ class ReviewStorageTest {
 
     @BeforeEach
     void setUp() {
-        film = new Film(1,"tort","test",LocalDate.of(2010,2,2),
-                100,new MPAA(5,"NC-17"));
+        film = new Film(1, "tort", "test", LocalDate.of(2010, 2, 2),
+                100, new MPAA(5, "NC-17"));
         filmDbStorage.create(film);
         user = new User(1, "tortis", "dmitry", "tortiss00@yandex.ru",
                 LocalDate.of(1992, 4, 23));
@@ -48,7 +48,7 @@ class ReviewStorageTest {
 
     @Test
     void getReviewById() {
-        Optional<Review> reviewOptional=reviewStorage.getReviewById(1);
+        Optional<Review> reviewOptional = reviewStorage.getReviewById(1);
 
         assertThat(reviewOptional)
                 .isPresent()
@@ -59,7 +59,7 @@ class ReviewStorageTest {
 
     @Test
     void create() {
-        Collection<Review> reviewCollection=reviewStorage.findAll();
+        Collection<Review> reviewCollection = reviewStorage.findAll();
 
         assertEquals(reviewCollection.size(), 1, "Количество обзоров не совпало");
     }
@@ -69,7 +69,7 @@ class ReviewStorageTest {
         review = new Review(1, "ккккккккк", true, 1, 1, 0);
         reviewStorage.update(review);
 
-        Optional<Review> reviewOptional=reviewStorage.getReviewById(1);
+        Optional<Review> reviewOptional = reviewStorage.getReviewById(1);
 
         assertEquals(reviewOptional.get().getContent(), "ккккккккк", "не обновилось");
     }
@@ -78,32 +78,32 @@ class ReviewStorageTest {
     void removeReview() {
         reviewStorage.removeReview(1);
 
-        Collection<Review> reviewCollection=reviewStorage.findAll();
+        Collection<Review> reviewCollection = reviewStorage.findAll();
 
         assertEquals(reviewCollection.size(), 0, "Количество обзоров не совпало");
     }
 
     @Test
     void putLikeReviewById() {
-        reviewStorage.putLikeReviewById(1,1);
+        reviewStorage.putLikeReviewById(1, 1);
 
-        Optional<Review> reviewOptional=reviewStorage.getReviewById(1);
+        Optional<Review> reviewOptional = reviewStorage.getReviewById(1);
 
         assertEquals(reviewOptional.get().getUseful(), 1, "лайк не поставлен");
     }
 
     @Test
     void putDislikeReviewById() {
-        reviewStorage.putDislikeReviewById(1,1);
+        reviewStorage.putDislikeReviewById(1, 1);
 
-        Optional<Review> reviewOptional=reviewStorage.getReviewById(1);
+        Optional<Review> reviewOptional = reviewStorage.getReviewById(1);
 
         assertEquals(reviewOptional.get().getUseful(), -1, "дизлайк не поставлен");
     }
 
     @Test
     void getReviewsFilmById() {
-        Collection<Review> reviewCollection=reviewStorage.getReviewsFilmById(null,null);
+        Collection<Review> reviewCollection = reviewStorage.getReviewsFilmById(null, null);
 
         assertEquals(reviewCollection.size(), 1, "Количество обзоров не совпало");
     }
@@ -115,7 +115,7 @@ class ReviewStorageTest {
         review = new Review(1, "test", true, 1, 1, 0);
         reviewStorage.create(review);
 
-        Collection<Review> reviewCollection=reviewStorage.findAll();
+        Collection<Review> reviewCollection = reviewStorage.findAll();
 
         assertEquals(reviewCollection.size(), 3, "Количество обзоров не совпало");
     }

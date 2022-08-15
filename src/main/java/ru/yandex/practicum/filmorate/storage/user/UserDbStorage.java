@@ -1,18 +1,22 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +36,20 @@ public class UserDbStorage implements UserStorage {
             " (SELECT FRIEND_ID FROM FRIENDS where USER_ID = ?)";
     private final String USER_SET_FRIENDS_SQL = "SELECT USER_ID From USERS where USER_ID IN " +
             "(SELECT FRIEND_ID FROM FRIENDS where USER_ID =?)";
-    private final JdbcTemplate jdbcTemplate;
+    private final String USER_DELETE_SQL = "delete from USERS where USER_ID = ? ";
+    private final String RECOMMENDATION_FIND_USER = "select user_id, count(film_id) FROM LIKES WHERE film_id IN (\n" +
+            "SELECT FILM_ID FROM LIKES WHERE USER_ID = ?) AND LIKES.USER_ID != ? GROUP BY USER_ID\n" +
+            "ORDER BY COUNT(FILM_ID) DESC LIMIT 1";
+    private final String GET_RECOMMENDATIONS = "SELECT * FROM LIKES WHERE FILM_ID in (SELECT FILM_ID FROM LIKEs" +
+            " WHERE USER_ID = ?) AND FILM_ID NOT IN(SELECT FILM_ID FROM LIKEs WHERE USER_ID = ?)";
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+    private final JdbcTemplate jdbcTemplate;
+    private final FilmDbStorage filmDbStorage;
+
+    @Autowired
+    public UserDbStorage(JdbcTemplate jdbcTemplate, FilmDbStorage filmDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.filmDbStorage = filmDbStorage;
     }
 
     @Override
@@ -93,6 +107,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int id) {
+        get(id);
         List<User> users = jdbcTemplate.query(USER_GET_FRIENDS_SQL, (rs, rowNum) -> makeUser(rs), id);
         return users;
     }
@@ -102,6 +117,24 @@ public class UserDbStorage implements UserStorage {
     public List<User> getCommonFriends(int id, int otherId) {
         List<User> users = jdbcTemplate.query(USER_COMMON_SQL, (rs, rowNum) -> makeUser(rs), id, otherId);
         return users;
+    }
+
+    @Override
+    public List<Film> getRecommendations(int id) {
+        List<Film> films = new ArrayList<>();
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(RECOMMENDATION_FIND_USER, id, id);
+        Integer userNewId = null;
+        if (userRows.next()) {
+            userNewId = userRows.getInt("user_id");
+        }
+        if (userNewId != null) {
+            SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet(GET_RECOMMENDATIONS, userNewId, id);
+            if (filmIdRows.next()) {
+                int filmId = filmIdRows.getInt("film_id");
+                films.add(filmDbStorage.get(filmId));
+            }
+        }
+        return films;
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
@@ -123,5 +156,12 @@ public class UserDbStorage implements UserStorage {
             user.setFriends(new HashSet<>(users));
         }
         return user;
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        get(id);
+        jdbcTemplate.update(USER_DELETE_SQL,
+                id);
     }
 }
